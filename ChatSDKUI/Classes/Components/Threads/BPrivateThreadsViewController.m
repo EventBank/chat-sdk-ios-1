@@ -31,13 +31,13 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
     
-    _editButton = [[UIBarButtonItem alloc] initWithTitle:[NSBundle t:bEdit]
-                                                   style:UIBarButtonItemStylePlain
-                                                  target:self
-                                                  action:@selector(editButtonPressed:)];
+//    _editButton = [[UIBarButtonItem alloc] initWithTitle:[NSBundle t:bEdit]
+//                                                   style:UIBarButtonItemStylePlain
+//                                                  target:self
+//                                                  action:@selector(editButtonPressed:)];
     
     // If we have no threads we don't have the edit button
-    self.navigationItem.leftBarButtonItem = _threads.count ? _editButton : nil;
+//    self.navigationItem.leftBarButtonItem = _threads.count ? _editButton : nil;
 }
 
 - (void)viewDidLoad {
