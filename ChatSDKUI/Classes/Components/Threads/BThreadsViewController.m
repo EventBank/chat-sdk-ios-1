@@ -48,13 +48,14 @@
     tableView = [[UITableView alloc] init];
     tableView.delegate = self;
     tableView.dataSource = self;
+    tableView.separatorColor = [UIColor clearColor];
     
     [self.view addSubview:tableView];
     
     tableView.keepInsets.equal = 0;
     
     // Sets the back button for the thread views as back meaning we have more space for the title
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[NSBundle t:bBack] style:UIBarButtonItemStylePlain target:nil action:nil];
+//    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"hey hey hey" style:UIBarButtonItemStylePlain target:nil action:nil];
     
     [tableView registerNib:[UINib nibWithNibName:@"BThreadCell" bundle:[NSBundle uiBundle]] forCellReuseIdentifier:bCellIdentifier];
     
@@ -140,13 +141,11 @@
     [self reloadData];
 }
 
-
 -(void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
     [self removeObservers];
 }
-
 
 -(void) toggleEditing {
     [self setEditingEnabled:!tableView.editing];
@@ -181,26 +180,22 @@
         text = [NSBundle textForMessage:newestMessage];
     }
     
-    if (threadDate) {
-        cell.dateLabel.text = threadDate.threadTimeAgo;
-    }
-    else {
-        cell.dateLabel.text = @"";
-    }
-    
-    if(BChatSDK.config.threadTimeFont) {
-        cell.dateLabel.font = BChatSDK.config.threadTimeFont;
-    }
-    
-    if(BChatSDK.config.threadTitleFont) {
+    if (BChatSDK.config.threadTitleFont) {
         cell.titleLabel.font = BChatSDK.config.threadTitleFont;
     }
-    
-    if(BChatSDK.config.threadSubtitleFont) {
+    cell.titleLabel.textColor = BChatSDK.config.mainTextColor;
+    cell.titleLabel.text = thread.displayName ? thread.displayName : [NSBundle t: bDefaultThreadName];
+
+    if (BChatSDK.config.threadSubtitleFont) {
         cell.messageTextView.font = BChatSDK.config.threadSubtitleFont;
     }
+    cell.messageTextView.textColor = BChatSDK.config.subTextColor;
     
-    cell.titleLabel.text = thread.displayName ? thread.displayName : [NSBundle t: bDefaultThreadName];
+    if (BChatSDK.config.threadTimeFont) {
+        cell.dateLabel.font = BChatSDK.config.threadTimeFont;
+    }
+    cell.dateLabel.textColor = BChatSDK.config.subTextColor;
+    cell.dateLabel.text = threadDate ? threadDate.threadTimeAgo : @"";
     
     NSString * threadImagePath = [thread.meta metaValueForKey:bImageURL];
     NSURL * threadURL = threadImagePath && threadImagePath.length ? [NSURL URLWithString:threadImagePath] : Nil;
@@ -214,11 +209,11 @@
         }, Nil);
     }
     
-    //    cell.unreadView.hidden = !thread.unreadMessageCount;
+//    cell.unreadView.hidden = !thread.unreadMessageCount;
     
-    int unreadCount = thread.unreadMessageCount;
-    cell.unreadMessagesLabel.hidden = !unreadCount;
-    cell.unreadMessagesLabel.text = [@(unreadCount) stringValue];
+//    int unreadCount = thread.unreadMessageCount;
+//    cell.unreadMessagesLabel.hidden = !unreadCount;
+//    cell.unreadMessagesLabel.text = [@(unreadCount) stringValue];
     
     // Add the typing indicator
     NSString * typingText = _threadTypingMessages[thread.entityID];
@@ -233,7 +228,6 @@
 }
 
 -(void) tableView:(UITableView *)tableView_ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     id<PThread> thread = _threads[indexPath.row];
     [self pushChatViewControllerWithThread:thread];
     [tableView_ deselectRowAtIndexPath:indexPath animated:YES];
@@ -277,7 +271,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 70;
+    return 100;
 }
 
 // Called when a thread is to be deleted

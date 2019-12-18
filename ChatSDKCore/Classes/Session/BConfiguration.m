@@ -13,6 +13,10 @@
 
 @synthesize messageColorMe;
 @synthesize messageColorReply;
+
+@synthesize mainTextColor;
+@synthesize subTextColor;
+
 @synthesize rootPath;
 @synthesize appBadgeEnabled;
 @synthesize defaultUserNamePrefix;
@@ -100,6 +104,10 @@
         
         messageColorMe = bDefaultMessageColorMe;
         messageColorReply = bDefaultMessageColorReply;
+        
+        mainTextColor = [BCoreUtilities colorWithHexString:bMainTextColor];
+        subTextColor = [BCoreUtilities colorWithHexString:bSubTextColor];
+        
         rootPath = @"default";
         appBadgeEnabled = YES;
         defaultUserNamePrefix = @"ChatSDK";
@@ -108,9 +116,9 @@
         
         defaultAvatarURL = [@"http://flathash.com/%@.png" stringByAppendingFormat: @"%@", self.defaultUserName];
         
-        facebookLoginEnabled = YES;
-        twitterLoginEnabled = YES;
-        googleLoginEnabled = YES;
+        facebookLoginEnabled = NO;
+        twitterLoginEnabled = NO;
+        googleLoginEnabled = NO;
         clientPushEnabled = NO;
         
         timeFormat = @"HH:mm";
@@ -140,7 +148,7 @@
         
         prefersLargeTitles = YES;
         
-        forgotPasswordEnabled = YES;
+        forgotPasswordEnabled = NO;
         
         databaseVersion = @"1";
         clearDatabaseWhenDataVersionChanges = NO;
@@ -263,6 +271,5 @@
 -(NSValue *) messageBubblePaddingForType: (bMessageType) type {
     return _messageBubblePadding[@(type)];
 }
-
 
 @end

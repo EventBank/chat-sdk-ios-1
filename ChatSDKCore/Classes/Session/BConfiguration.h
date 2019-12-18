@@ -36,6 +36,10 @@ typedef enum {
 @property (nonatomic, readwrite) NSString * messageColorMe;
 @property (nonatomic, readwrite) NSString * messageColorReply;
 
+// Text color of title & subtitle: hex value like "FFFFFF"
+@property (nonatomic, readwrite) UIColor * mainTextColor;
+@property (nonatomic, readwrite) UIColor * subTextColor;
+
 // The Firebase root path. Data will be added to Firebase root/rootPath...
 // this allows you to run multiple chat instances on one Firebase database
 @property (nonatomic, readwrite) NSString * rootPath;

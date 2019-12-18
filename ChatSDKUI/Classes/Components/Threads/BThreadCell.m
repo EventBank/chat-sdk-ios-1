@@ -11,23 +11,29 @@
 #import <ChatSDK/Core.h>
 #import <ChatSDK/UI.h>
 
-#define bOnlineIndicatorColor @"88bb45"
+#define bOnlineIndicatorColor @"32a852"
+#define bOfflineIndicatorColor @"7c95ab"
 
 @implementation BThreadCell
 
 - (void)awakeFromNib
 {
     self.profileImageView.layer.cornerRadius = self.profileImageView.fh/2.0;
-    self.profileImageView.layer.borderColor = [UIColor darkGrayColor].CGColor;
-    self.profileImageView.layer.borderWidth = 1.0;
+//    self.profileImageView.layer.borderColor = [UIColor darkGrayColor].CGColor;
+//    self.profileImageView.layer.borderWidth = 1.0;
+    
+    self.indicatorBackgroundView.layer.cornerRadius = self.indicatorBackgroundView.fh/2.0;
+    self.indicatorView.layer.cornerRadius = self.indicatorView.fh/2.0;
+    
     self.messageTextView.userInteractionEnabled = NO;
     self.messageTextView.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
-    self.unreadView.layer.borderColor = [UIColor darkGrayColor].CGColor;
-    self.unreadView.layer.borderWidth = 1.0;
-    self.unreadView.layer.cornerRadius = self.unreadView.fh / 2.0;
     
-    self.unreadMessagesLabel.layer.cornerRadius = 5;
-    self.unreadMessagesLabel.clipsToBounds = YES;
+//    self.unreadView.layer.borderColor = [UIColor darkGrayColor].CGColor;
+//    self.unreadView.layer.borderWidth = 1.0;
+//    self.unreadView.layer.cornerRadius = self.unreadView.fh / 2.0;
+    
+//    self.unreadMessagesLabel.layer.cornerRadius = 5;
+//    self.unreadMessagesLabel.clipsToBounds = YES;
     
     self.preservesSuperviewLayoutMargins = NO;
     self.separatorInset = UIEdgeInsetsZero;
@@ -36,12 +42,16 @@
 
 -(void) setIsOnline: (BOOL) isOnline {
     if (isOnline) {
-        self.profileImageView.layer.borderColor = [BCoreUtilities colorWithHexString:bOnlineIndicatorColor].CGColor;
-        self.profileImageView.layer.borderWidth = 2.0;
+//        self.profileImageView.layer.borderColor = [BCoreUtilities colorWithHexString:bOnlineIndicatorColor].CGColor;
+//        self.profileImageView.layer.borderWidth = 2.0;
+
+        self.indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:bOnlineIndicatorColor];
     }
     else {
-        self.profileImageView.layer.borderColor = [UIColor darkGrayColor].CGColor;
-        self.profileImageView.layer.borderWidth = 1.0;
+//        self.profileImageView.layer.borderColor = [UIColor darkGrayColor].CGColor;
+//        self.profileImageView.layer.borderWidth = 1.0;
+        
+        self.indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:bOfflineIndicatorColor];
     }
 }
 
@@ -54,12 +64,12 @@
 
 -(void) startTypingWithMessage: (NSString *) message {
     self.messageTextView.text = message;
-    self.messageTextView.textColor = [UIColor darkGrayColor];
+//    self.messageTextView.textColor = [UIColor darkGrayColor];
 }
 
 -(void) stopTypingWithMessage: (NSString *) message {
     self.messageTextView.text = message;
-    self.messageTextView.textColor = [UIColor lightGrayColor];
+//    self.messageTextView.textColor = [UIColor lightGrayColor];
 }
 
 @end
