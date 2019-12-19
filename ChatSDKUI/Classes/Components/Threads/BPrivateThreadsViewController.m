@@ -28,8 +28,8 @@
     return self;
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:YES];
+//- (void)viewWillAppear:(BOOL)animated {
+//    [super viewWillAppear:YES];
     
 //    _editButton = [[UIBarButtonItem alloc] initWithTitle:[NSBundle t:bEdit]
 //                                                   style:UIBarButtonItemStylePlain
@@ -38,7 +38,7 @@
     
     // If we have no threads we don't have the edit button
 //    self.navigationItem.leftBarButtonItem = _threads.count ? _editButton : nil;
-}
+//}
 
 - (void)viewDidLoad {
     [super viewDidLoad];

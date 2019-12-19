@@ -54,9 +54,6 @@
     
     tableView.keepInsets.equal = 0;
     
-    // Sets the back button for the thread views as back meaning we have more space for the title
-//    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"hey hey hey" style:UIBarButtonItemStylePlain target:nil action:nil];
-    
     [tableView registerNib:[UINib nibWithNibName:@"BThreadCell" bundle:[NSBundle uiBundle]] forCellReuseIdentifier:bCellIdentifier];
     
 }
@@ -219,8 +216,7 @@
     NSString * typingText = _threadTypingMessages[thread.entityID];
     if (typingText && typingText.length) {
         [cell startTypingWithMessage:typingText];
-    }
-    else {
+    } else {
         [cell stopTypingWithMessage:text];
     }
     
@@ -243,8 +239,7 @@
 }
 
 // Fix divider lines not being full width on the iPad
--(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
+-(void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
         [cell setSeparatorInset:UIEdgeInsetsZero];
     }

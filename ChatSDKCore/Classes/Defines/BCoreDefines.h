@@ -19,6 +19,9 @@
 #define bDefaultMessageColorMe @"abcff4"
 #define bDefaultMessageColorReply @"d7d4d3"
 
+#define bMainTextColor @"002959"
+#define bSubTextColor @"7f94ac"
+
 #define bDefaultProfileImage @"icn_100_anonymous.png"
 #define bDefaultPublicGroupImage @"icn_100_anonymous_group.png"
 #define bDefaultPlaceholderImage @"icn_300_placeholder.png"
