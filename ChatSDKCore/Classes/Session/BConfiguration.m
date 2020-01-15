@@ -13,9 +13,12 @@
 
 @synthesize messageColorMe;
 @synthesize messageColorReply;
+@synthesize messageColorTime;
 
-@synthesize mainTextColor;
-@synthesize subTextColor;
+@synthesize backImage;
+@synthesize actionImage;
+@synthesize attachmentImage;
+@synthesize sendImage;
 
 @synthesize rootPath;
 @synthesize appBadgeEnabled;
@@ -104,9 +107,6 @@
         
         messageColorMe = bDefaultMessageColorMe;
         messageColorReply = bDefaultMessageColorReply;
-        
-        mainTextColor = [BCoreUtilities colorWithHexString:bMainTextColor];
-        subTextColor = [BCoreUtilities colorWithHexString:bSubTextColor];
         
         rootPath = @"default";
         appBadgeEnabled = YES;
@@ -216,8 +216,8 @@
         
         nameLabelPosition = bNameLabelPositionBottom;
         combineTimeWithNameLabel = NO;
-        
     }
+
     return self;
 }
 

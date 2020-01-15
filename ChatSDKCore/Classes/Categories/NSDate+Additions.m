@@ -21,19 +21,39 @@
     NSDateComponents *otherDay = [[NSCalendar currentCalendar] components:NSCalendarUnitDay fromDate:self];
     NSDateComponents *today = [[NSCalendar currentCalendar] components:NSCalendarUnitDay fromDate:[NSDate date]];
 
-    // We check if the last date was in the last few days
-    // Then check if it was exactly yesterday
-    if ([self daysAgo] < 3 && today.day == otherDay.day + 1) {
-        time = [NSBundle t: bYesterday];
+    if (self.isToday) { // when the date/time is within 24hrs
+        NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSUInteger unitFlags = NSSecondCalendarUnit | NSMinuteCalendarUnit | NSHourCalendarUnit;
+        NSDateComponents *components = [gregorian components:unitFlags
+                                                    fromDate:self
+                                                      toDate:[NSDate date]
+                                                     options:0];
+        NSInteger seconds = [components second];
+        NSInteger minutes = [components minute];
+        NSInteger hours = [components hour];
+
+        if (hours >= 1) { // hours
+            return [NSString stringWithFormat:@"%dh %@", hours, [NSBundle t: bAgo]];
+        } else if (minutes >= 1) {
+            return [NSString stringWithFormat:@"%dm %@", minutes, [NSBundle t: bAgo]];
+        } else {
+            return [NSString stringWithFormat:@"%ds %@", seconds, [NSBundle t: bAgo]];
+        }
+    } else {
+        // We check if the last date was in the last few days
+        // Then check if it was exactly yesterday
+        if ([self daysAgo] < 3 && today.day == otherDay.day + 1) {
+            time = [NSBundle t: bYesterday];
+//        } else if (self.daysAgo > 1 && self.daysAgo < 7) {
+//            [formatter setDateFormat:@"EEEE"];
+//            time = [formatter stringFromDate:self];
+        } else { // if (self.daysAgo >= 7) {
+//            [formatter setDateFormat:@"dd/MM/yy"];
+            [formatter setDateFormat:@"MMM dd"];
+            time = [formatter stringFromDate:self];
+        }
     }
-    else if (self.daysAgo > 1 && self.daysAgo < 7) {
-        [formatter setDateFormat:@"EEEE"];
-        time = [formatter stringFromDate:self];
-    }
-    else if (self.daysAgo >= 7) {   
-        [formatter setDateFormat:@"dd/MM/yy"];
-        time = [formatter stringFromDate:self];
-    }
+
     return time;
 }
 
@@ -57,21 +77,17 @@
 }
 
 -(NSString *) dateAgo {
-
     NSString * day = @"";
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 
     if (self.isToday) {
         day = [NSBundle t: bToday];
-    }
-    else if (self.isYesterday) {
+    } else if (self.isYesterday) {
         day = [NSBundle t: bYesterday];
-    }
-    else if (self.daysAgo < 7) {
+    } else if (self.daysAgo < 7) {
         [formatter setDateFormat:@"EEE"];
         day = [formatter stringFromDate:self];
-    }
-    else {
+    } else {
         [formatter setDateFormat:@"MM/yy"];
         day = [formatter stringFromDate:self];
     }
@@ -105,7 +121,6 @@
     NSString * day = [self dateAgo];
     return [NSString stringWithFormat:[NSBundle t:formatString], day, time];
 }
-
 
 @end
 

@@ -18,46 +18,40 @@
 @synthesize message = _message;
 @synthesize profilePicture = _profilePicture;
 
--(instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
+- (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        
-        // They aren't selectable
+    if (self) { // They aren't selectable
         self.selectionStyle = UITableViewCellSelectionStyleDefault;
-        
+
         // Make sure the selected color is white
         self.selectedBackgroundView = [[UIView alloc] init];
 
         // Bubble view
         bubbleImageView = [[UIImageView alloc] init];
         bubbleImageView.contentMode = UIViewContentModeScaleToFill;
-        bubbleImageView.userInteractionEnabled = YES;
-
+        bubbleImageView.userInteractionEnabled = NO;
         [self.contentView addSubview:bubbleImageView];
-        
+
         _profilePicture = [[UIImageView alloc] init];
         _profilePicture.contentMode = UIViewContentModeScaleAspectFill;
         _profilePicture.clipsToBounds = YES;
-        
         [self.contentView addSubview:_profilePicture];
-        
-        _timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(bTimeLabelPadding, 0, 0, 0)];
-        
-        _timeLabel.font = [UIFont italicSystemFontOfSize:12];
-        if(BChatSDK.config.messageTimeFont) {
-            _timeLabel.font = BChatSDK.config.messageTimeFont;
-        }
 
-        _timeLabel.textColor = [UIColor lightGrayColor];
+        // EB_DISABLE
+//        UITapGestureRecognizer * profileTouched = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showProfileView)];
+//        _profilePicture.userInteractionEnabled = NO;
+//        [_profilePicture addGestureRecognizer:profileTouched];
+
+        _timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(bTimeLabelPadding, 0, 0, 0)];
+        _timeLabel.font = BChatSDK.config.messageTimeFont;
+        _timeLabel.textColor = BChatSDK.config.messageColorTime;
         _timeLabel.userInteractionEnabled = NO;
-        
+
         [self.contentView addSubview:_timeLabel];
 
         _nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(bTimeLabelPadding, 0, 0, 0)];
         _nameLabel.userInteractionEnabled = NO;
-        
-        _nameLabel.font = [UIFont boldSystemFontOfSize:bDefaultUserNameLabelSize];
+//        _nameLabel.font = [UIFont boldSystemFontOfSize:bDefaultUserNameLabelSize];
         if(BChatSDK.config.messageNameFont) {
             _nameLabel.font = BChatSDK.config.messageNameFont;
         }
@@ -66,14 +60,10 @@
         _readMessageImageView = [[UIImageView alloc] initWithFrame:CGRectMake(bTimeLabelPadding, 0, 0, 0)];
         [self setReadStatus:bMessageReadStatusNone];
         [self.contentView addSubview:_readMessageImageView];
-        
-        UITapGestureRecognizer * profileTouched = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showProfileView)];
-        _profilePicture.userInteractionEnabled = YES;
-        [_profilePicture addGestureRecognizer:profileTouched];
-        
-        _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 
+        _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     }
+
     return self;
 }
 
@@ -93,11 +83,10 @@
         default:
             break;
     }
-    
+
     if (imageName) {
         _readMessageImageView.image = [NSBundle uiImageNamed:imageName];
-    }
-    else {
+    } else {
         _readMessageImageView.image = Nil;
     }
 }
@@ -121,32 +110,30 @@
 
 // Called to setup the current cell for the message
 -(void) setMessage: (id<PElmMessage>) message withColorWeight: (float) colorWeight {
-    
-    // Set the message for later use
-    _message = message;
-    
+    _message = message; // Set the message for later use
+
     BOOL isMine = message.senderIsMe;
-    if (isMine) {
+    /*if (isMine) {
         [self setReadStatus:message.messageReadStatus];
-    }
-    else {
+    } else {
         [self setReadStatus:bMessageReadStatusHide];
-    }
-    
+    }*/
+
     bMessagePos position = message.messagePosition;
     id<PElmMessage> nextMessage = message.nextMessage;
-    
+
     // Set the bubble to be the correct color
     bubbleImageView.image = [[BMessageCache sharedCache] bubbleForMessage:message withColorWeight:colorWeight];
 
     // Hide profile pictures for 1-to-1 threads
-    _profilePicture.hidden = self.profilePictureHidden;
-    
+    _profilePicture.hidden = isMine; //self.profilePictureHidden;
+    [_profilePicture loadAvatar:message.userModel];
+
     // We only want to show the user picture if it is the latest message from the user
-    if (position & BChatSDK.config.showMessageAvatarAtPosition) {
+    /*if (position & BChatSDK.config.showMessageAvatarAtPosition) {
         if (message.userModel) {
             [_profilePicture loadAvatar:message.userModel];
-            
+
 //            if(message.userModel.imageURL) {
 //                [_profilePicture sd_setImageWithURL:[NSURL URLWithString: message.userModel.imageURL]
 //                                   placeholderImage:message.userModel.defaultImage options:SDWebImageLowPriority & SDWebImageScaleDownLargeImages];
@@ -157,17 +144,15 @@
 //            else {
 //                [_profilePicture setImage:message.userModel.defaultImage];
 //            }
-        }
-        else {
+        } else {
             // If the user doesn't have a profile picture set the default profile image
             _profilePicture.image = message.userModel.defaultImage;
             _profilePicture.backgroundColor = [UIColor whiteColor];
         }
-    }
-    else {
+    } else {
         _profilePicture.image = nil;
-    }
-    
+    }*/
+
     if (message.flagged.intValue) {
         _timeLabel.text = [NSBundle t:bFlagged];
     }
@@ -176,145 +161,150 @@
     // We use 10 here because if the messages are less than 10 minutes apart, then we
     // can just compare the minute figures. If they were hours apart they could have
     // the same number of minutes
-    if (nextMessage && [nextMessage.date minutesFrom:message.date] < 10) {
-        if (message.date.minute == nextMessage.date.minute && [message.userModel isEqual: nextMessage.userModel]) {
-            _timeLabel.text = Nil;
-        }
-    }
-    
-    _nameLabel.text = _message.userModel.name;
+//    if (nextMessage && [nextMessage.date minutesFrom:message.date] < 10) {
+//    if ([nextMessage.date minutesFrom:message.date] < 10) {
+//        if (message.date.minute == nextMessage.date.minute && [message.userModel isEqual: nextMessage.userModel]) {
+//            _timeLabel.text = Nil;
+//        }
+//    }
 
-//    
+//    _nameLabel.text = _message.userModel.name;
+
 //    // We only want to show the name label if the previous message was posted by someone else and if this is enabled in the thread
 //    // Or if the message is mine...
-    
-    _nameLabel.hidden = ![BMessageCell showUserNameLabelForMessage:message atPosition:@(position)];
-    
+    _nameLabel.hidden = true; // ![BMessageCell showUserNameLabelForMessage:message atPosition:@(position)];
+
     // Hide the read receipt view if this is a public thread or if read receipts are disabled
-    _readMessageImageView.hidden = _message.thread.type.intValue & bThreadFilterPublic || !BChatSDK.readReceipt;
-    
-    _timeLabel.hidden = BChatSDK.config.combineTimeWithNameLabel;
-    
-    if (BChatSDK.config.combineTimeWithNameLabel) {
-        _nameLabel.text = [_nameLabel.text stringByAppendingFormat:@", %@", message.date.messageTimeAt];
-    }
+    _readMessageImageView.hidden = true; //_message.thread.type.intValue & bThreadFilterPublic || !BChatSDK.readReceipt;
+
+//    _timeLabel.hidden = BChatSDK.config.combineTimeWithNameLabel;
+
+//    if (BChatSDK.config.combineTimeWithNameLabel) {
+//        _nameLabel.text = [_nameLabel.text stringByAppendingFormat:@", %@", message.date.messageTimeAt];
+//    }
 }
 
 -(void) willDisplayCell {
-    
     // Add an extra margin if there is no profile picture
     UIEdgeInsets margin = self.bubbleMargin;
     UIEdgeInsets padding = self.bubblePadding;
-    
+
     // Set the margins and height for message
     [bubbleImageView setFrame:CGRectMake(margin.left,
                                          margin.top,
                                          self.bubbleWidth,
                                          self.bubbleHeight)];
-    
+
     [_nameLabel setViewFrameY:self.bubbleHeight + 5];
-    
+
     // #1 Because of the text view insets we want the cellContentView of the
     // text cell to extend to the right edge of the bubble
     BOOL isMine = [_message.userModel isEqual:BChatSDK.currentUser];
-    
+
     // Layout the profile picture
     if (_profilePicture.isHidden) {
         _profilePicture.frame = CGRectZero;
-    }
-    else {
+    } else {
         float ppDiameter = [BMessageCell profilePictureDiameter];
         float ppPadding = self.profilePicturePadding;
 
         [_profilePicture setFrame:CGRectMake(ppPadding,
-                                             (self.cellHeight - ppDiameter - self.nameHeight)/2.0,
+                                             (self.cellHeight - ppDiameter), // - self.nameHeight)/2.0,
                                              ppDiameter,
                                              ppDiameter)];
-        
+
         _profilePicture.layer.cornerRadius = ppDiameter / 2.0;
     }
-    
+
     if (BChatSDK.config.nameLabelPosition == bNameLabelPositionBottom) {
         // Set the margins and height for message
         [bubbleImageView setFrame:CGRectMake(margin.left,
                                              margin.top,
                                              self.bubbleWidth,
                                              self.bubbleHeight)];
-        
+
         [_nameLabel setViewFrameY:self.bubbleHeight + 5];
     }
+
     if (BChatSDK.config.nameLabelPosition == bNameLabelPositionTop) {
         float nameLabelHeight = self.nameHeight;
         [bubbleImageView setFrame:CGRectMake(margin.left,
                                              margin.top + nameLabelHeight,
                                              self.bubbleWidth,
                                              self.bubbleHeight)];
-        
+
         [_nameLabel setViewFrameY:margin.top];
         //        [_nameLabel setViewFrameX:50];
     }
-    
+
+    // adjustment for the time stamp
+    [bubbleImageView setFrame:CGRectMake(margin.left,
+                                         margin.top + self.timeHeight,
+                                         self.bubbleWidth,
+                                         self.bubbleHeight)];
+    [_timeLabel setViewFrameY:margin.top];
+
     // Update the content view size for the message length
     // The cell content view is the view that's inside the bubble that stores the message content
     [self cellContentView].frame = CGRectMake((isMine ? 0 : bTailSize) + padding.left, padding.top, self.contentWidth, self.contentHeight);
-    
+
 //    NSLog(@"Content Size: %@", NSStringFromCGRect([self cellContentView].frame));
 //    NSLog(@"Text Width: %f", [BMessageCell textWidth:_message.textString maxWidth:[self maxTextWidth]]);
-
 }
 
 
 // Format the cells properly when the device orientation changes
 -(void) layoutSubviews {
     [super layoutSubviews];
-    
+
     BOOL isMine = [_message.userModel isEqual:BChatSDK.currentUser];
-    
+
     // Extra x-margin if the profile picture isn't shown
     // TODO: Fix this
-    float xMargin =  _profilePicture.image ? 0 : 0;
-    
+    float xMargin = _profilePicture.image ? 0 : 0;
+
     // Layout the date label this will be the full size of the cell
     // This will automatically center the text in the y direction
     // we'll set the side using text alignment
     [_timeLabel setViewFrameWidth:self.fw - bTimeLabelPadding * 2.0];
-    
-    // We don't want the label getting in the way of the read receipt
-    [_timeLabel setViewFrameHeight:self.cellHeight * 0.8];
-    
+    [_timeLabel setViewFrameHeight: self.timeHeight];
+
     [_readMessageImageView setViewFrameWidth:bReadReceiptWidth];
     [_readMessageImageView setViewFrameHeight:bReadReceiptHeight];
     [_readMessageImageView setViewFrameY:_timeLabel.fh * 2.0 / 3.0];
-    
+
     // Make the width less by the profile picture width means the name and profile picture are inline
     [_nameLabel setViewFrameWidth:self.fw - bTimeLabelPadding * 2.0 - _profilePicture.fw];
     [_nameLabel setViewFrameHeight:self.nameHeight];
-    
+
     // Layout the bubble
     // The bubble is translated the "margin" to the right of the profile picture
     [_nameLabel setViewFrameX:0];
     if (!isMine) {
         [_profilePicture setViewFrameX:_profilePicture.hidden ? 0 : self.profilePicturePadding];
         [bubbleImageView setViewFrameX:self.bubbleMargin.left + _profilePicture.fx + _profilePicture.fw + xMargin];
-        
+        [_timeLabel setViewFrameX:bTimeLabelPadding + _profilePicture.fw];
+
         if (BChatSDK.config.nameLabelPosition == bNameLabelPositionBottom) {
             [_nameLabel setViewFrameX:bTimeLabelPadding];
         }
+
         if (BChatSDK.config.nameLabelPosition == bNameLabelPositionTop) {
             [_nameLabel setViewFrameX:bTimeLabelPadding + _profilePicture.fw];
         }
-        _timeLabel.textAlignment = NSTextAlignmentRight;
+
+        _timeLabel.textAlignment = NSTextAlignmentLeft;
         _nameLabel.textAlignment = NSTextAlignmentLeft;
     }
     else {
         [_profilePicture setViewFrameX:_profilePicture.hidden ? self.contentView.fw : self.contentView.fw - _profilePicture.fw - self.profilePicturePadding];
         [bubbleImageView setViewFrameX:_profilePicture.fx - self.bubbleWidth - self.bubbleMargin.right - xMargin];
-        //[_nameLabel setViewFrameX: bTimeLabelPadding];
-        
-        _timeLabel.textAlignment = NSTextAlignmentLeft;
+        [_timeLabel setViewFrameX: bTimeLabelPadding];
+
+        _timeLabel.textAlignment = NSTextAlignmentRight;
         _nameLabel.textAlignment = NSTextAlignmentRight;
     }
-    
+
 //        self.bubbleImageView.layer.borderColor = UIColor.redColor.CGColor;
 //        self.bubbleImageView.layer.borderWidth = 1;
 //        self.contentView.layer.borderColor = UIColor.blueColor.CGColor;
@@ -334,7 +324,6 @@
 
 // Open the users profile
 -(void) showProfileView {
-    
     // Cannot view our own profile this way
     if (!_message.userModel.isMe) {
         UIViewController * profileView = [BChatSDK.ui profileViewControllerWithUser:_message.userModel];
@@ -349,28 +338,27 @@
 }
 
 +(BOOL)showUserNameLabelForMessage: (id<PMessage>) message atPosition: (NSNumber *) position {
-    
     Class cellType = [BChatSDK.ui cellTypeForMessageType:message.type];
     SEL selector = @selector(showUserNameLabelForMessage:atPosition:);
     if ([cellType respondsToSelector:selector] && ![cellType isEqual:self.class]) {
         return [cellType performSelector:selector withObject:message withObject: position];
     }
-    
+
     if (message.senderIsMe) {
         return NO;
     }
-    
+
     // Show the label on the correct message
     bMessagePos textPosition = BChatSDK.config.nameLabelPosition == bNameLabelPositionTop ? bMessagePosFirst : bMessagePosLast;
-    
+
     if ((message.thread.type.intValue & bThreadFilterPublic || message.thread.users.count > 2) && position.intValue & textPosition) {
         return YES;
     }
-    
+
     if (!(position.intValue & BChatSDK.config.showMessageAvatarAtPosition)) {
         return NO;
     }
-    
+
     return NO;
 }
 
@@ -379,36 +367,36 @@
 
 // MEM1
 +(UIImage *) bubbleWithImage: (UIImage *) bubbleImage withColor: (UIColor *) color {
-    
+
     // Get a CGImageRef so we can use CoreGraphics
     CGImageRef image = bubbleImage.CGImage;
-    
+
     CGFloat width = CGImageGetWidth(image);
     CGFloat height = CGImageGetHeight(image);
-    
+
     // Create a new bitmap context i.e. a buffer to store the pixel data
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
+
     size_t bitsPerComponent = 8;
     size_t bytesPerPixel    = 4;
     size_t bytesPerRow      = (width * bitsPerComponent * bytesPerPixel + 7) / 8; // As per the header file for CGBitmapContextCreate
     size_t dataSize         = bytesPerRow * height;
-    
+
     // Allocate some memory to store the pixels
     unsigned char *data = malloc(dataSize);
     memset(data, 0, dataSize);
-    
+
     // Create the context
     CGContextRef context = CGBitmapContextCreate(data, width, height,
                                                  bitsPerComponent, bytesPerRow, colorSpace,
                                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-    
+
     // Draw the image onto the context
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
-    
+
     // Get the components of our input color
     const CGFloat * colors = CGColorGetComponents(color.CGColor);
-    
+
     // Change the pixels which have alpha > 0 to our new color
     for (int i  = 0 ; i < width * height * 4 ; i+=4)
     {
@@ -419,10 +407,10 @@
             data[i + 2] = (char) (colors[2] * 255);
         }
     }
-    
+
     NSInteger leftCapWidth = bubbleImage.leftCapWidth;
     NSInteger topCapHeight = bubbleImage.topCapHeight;
-    
+
     // Write from the context to our new image
     // Make sur to copy across the orientation and scale so the bubbles render
     // properly on a retina screen
@@ -436,7 +424,7 @@
     CGContextRelease(context);
     free(data);
     CGColorSpaceRelease(colorSpace);
-    
+
     return newImage;
 }
 
@@ -455,15 +443,15 @@
 }
 
 +(float) contentHeight: (id<PElmMessage>) message maxWidth: (float) maxWidth {
-    
+
     // Get the cell type
     Class cellType = [BChatSDK.ui cellTypeForMessageType:message.type];
-    
+
     SEL selector = @selector(messageContentHeight:maxWidth:);
     if ([cellType respondsToSelector:selector]) {
         return [[cellType performSelector:selector withObject:message withObject: @(maxWidth)] floatValue];
     }
-    
+
     return [self messageContentHeight:message maxWidth:maxWidth].floatValue;
 }
 
@@ -476,14 +464,14 @@
 }
 
 +(float) contentWidth: (id<PElmMessage>) message maxWidth: (float) maxWidth {
-    
+
     Class cellType = [BChatSDK.ui cellTypeForMessageType:message.type];
-    
+
     SEL selector = @selector(messageContentWidth:maxWidth:);
     if ([cellType respondsToSelector:selector]) {
         return [[cellType performSelector:selector withObject:message withObject: @(maxWidth)] floatValue];
     }
-    
+
     return [self messageContentWidth:message maxWidth:maxWidth].floatValue;
 }
 
@@ -517,13 +505,29 @@
 
 +(float) cellHeight: (id<PElmMessage>) message maxWidth: (float) maxWidth {
     UIEdgeInsets bubbleMargin = [self bubbleMargin:message];
-    return [BMessageCell bubbleHeight:message maxWidth:maxWidth] + bubbleMargin.top + bubbleMargin.bottom + [self nameHeight:message];
+    return [BMessageCell bubbleHeight:message maxWidth:maxWidth] + bubbleMargin.top + bubbleMargin.bottom + [self nameHeight:message] + [self timeHeight:message];
 }
 
 +(float) cellHeight: (id<PElmMessage>) message {
     float maxWidth = [self maxTextWidth:message];
     UIEdgeInsets bubbleMargin = [self bubbleMargin:message];
-    return [BMessageCell bubbleHeight:message maxWidth:maxWidth] + bubbleMargin.top + bubbleMargin.bottom + [self nameHeight:message];
+    return [BMessageCell bubbleHeight:message maxWidth:maxWidth] + bubbleMargin.top + bubbleMargin.bottom + [self nameHeight:message] + [self timeHeight:message];
+}
+
+- (float) timeHeight {
+    return [BMessageCell timeHeight:_message];
+}
+
++ (float) timeHeight: (id<PElmMessage>) message {
+    bMessagePos position = message.messagePosition;
+    id<PElmMessage> nextMessage = message.nextMessage;
+    if ([nextMessage.date minutesFrom:message.date] < 10) {
+        if (message.date.minute == nextMessage.date.minute && [message.userModel isEqual: nextMessage.userModel]) {
+            return 0;
+        }
+    }
+
+    return bTimeLabelHeight;
 }
 
 -(float) nameHeight {
@@ -560,14 +564,14 @@
     if (value) {
         return [value UIEdgeInsetsValue];
     }
-    
+
     Class cellType = [BChatSDK.ui cellTypeForMessageType:message.type];
 
     SEL selector = @selector(messageBubbleMargin:);
     if ([cellType respondsToSelector:selector]) {
         return [[cellType performSelector:selector withObject:message] UIEdgeInsetsValue];
     }
-    
+
     return [self messageBubbleMargin:message].UIEdgeInsetsValue;
 }
 
@@ -581,7 +585,7 @@
     if (value) {
         return [value UIEdgeInsetsValue];
     }
-    
+
     Class cellType = [BChatSDK.ui cellTypeForMessageType:message.type];
 
     SEL selector = @selector(messageBubblePadding:);
@@ -597,14 +601,14 @@
 }
 
 +(float) profilePicturePadding: (id<PElmMessage>) message {
-    
+
     Class cellType = [BChatSDK.ui cellTypeForMessageType:message.type];
-    
+
     SEL selector = @selector(messageProfilePicturePadding:);
     if ([cellType respondsToSelector:selector]) {
         return [[cellType performSelector:selector withObject:message] floatValue];
     }
-    
+
     return [self messageProfilePicturePadding:message].floatValue;
 }
 

@@ -36,9 +36,8 @@ typedef enum {
 @property (nonatomic, readwrite) NSString * messageColorMe;
 @property (nonatomic, readwrite) NSString * messageColorReply;
 
-// Text color of title & subtitle: hex value like "FFFFFF"
-@property (nonatomic, readwrite) UIColor * mainTextColor;
-@property (nonatomic, readwrite) UIColor * subTextColor;
+// Text color of message time
+@property (nonatomic, readwrite) UIColor * messageColorTime;
 
 // The Firebase root path. Data will be added to Firebase root/rootPath...
 // this allows you to run multiple chat instances on one Firebase database
@@ -173,6 +172,11 @@ typedef enum {
 @property (nonatomic, readwrite) UIFont * threadTimeFont;
 @property (nonatomic, readwrite) UIFont * threadSubtitleFont;
 
+// Text color of thread title & subtitle: hex value like "FFFFFF"
+@property (nonatomic, readwrite) UIColor * threadTitleColor;
+@property (nonatomic, readwrite) UIColor * threadSubtitleColor;
+@property (nonatomic, readwrite) UIColor * threadUnreadSubtitleColor;
+
 @property (nonatomic, readwrite) BOOL locationMessagesEnabled;
 @property (nonatomic, readwrite) BOOL imageMessagesEnabled;
 
@@ -252,6 +256,12 @@ typedef enum {
 @property (nonatomic, readwrite) int publicChatRoomLifetimeMinutes;
 
 @property (nonatomic, readwrite) BOOL vibrateOnNewMessage;
+
+// The the image to be displayed on the navigation area.
+@property (nonatomic, readwrite) UIImage * backImage;
+@property (nonatomic, readwrite) UIImage * actionImage;
+@property (nonatomic, readwrite) UIImage * attachmentImage;
+@property (nonatomic, readwrite) UIImage * sendImage;
 
 +(BConfiguration *) configuration;
 

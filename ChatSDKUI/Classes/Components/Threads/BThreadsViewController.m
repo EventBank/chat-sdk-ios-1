@@ -55,7 +55,6 @@
     tableView.keepInsets.equal = 0;
     
     [tableView registerNib:[UINib nibWithNibName:@"BThreadCell" bundle:[NSBundle uiBundle]] forCellReuseIdentifier:bCellIdentifier];
-    
 }
 
 -(void) addObservers {
@@ -151,8 +150,7 @@
 -(void) setEditingEnabled: (BOOL) enabled {
     if (enabled) {
         [_editButton setTitle:[NSBundle t:bDone]];
-    }
-    else {
+    } else {
         [_editButton setTitle:[NSBundle t:bEdit]];
     }
     [tableView setEditing:enabled animated:YES];
@@ -163,7 +161,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView_ cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     BThreadCell * cell = [tableView_ dequeueReusableCellWithIdentifier:bCellIdentifier];
     
     id<PThread> thread = _threads[indexPath.row];
@@ -176,23 +173,23 @@
     if (newestMessage) {
         text = [NSBundle textForMessage:newestMessage];
     }
-    
-    if (BChatSDK.config.threadTitleFont) {
-        cell.titleLabel.font = BChatSDK.config.threadTitleFont;
-    }
-    cell.titleLabel.textColor = BChatSDK.config.mainTextColor;
-    cell.titleLabel.text = thread.displayName ? thread.displayName : [NSBundle t: bDefaultThreadName];
 
-    if (BChatSDK.config.threadSubtitleFont) {
-        cell.messageTextView.font = BChatSDK.config.threadSubtitleFont;
+    cell.titleLabel.textColor = BChatSDK.config.threadTitleColor;
+    cell.titleLabel.text = thread.displayName ? thread.displayName : [NSBundle t: bDefaultThreadName];
+    cell.titleLabel.font = BChatSDK.config.threadTitleFont;
+
+    cell.messageTextView.font = BChatSDK.config.threadSubtitleFont;
+
+    int unreadCount = thread.unreadMessageCount;
+    if (unreadCount > 0) {
+        cell.messageTextView.textColor = BChatSDK.config.threadUnreadSubtitleColor;
+    } else {
+        cell.messageTextView.textColor = BChatSDK.config.threadSubtitleColor;
     }
-    cell.messageTextView.textColor = BChatSDK.config.subTextColor;
-    
-    if (BChatSDK.config.threadTimeFont) {
-        cell.dateLabel.font = BChatSDK.config.threadTimeFont;
-    }
-    cell.dateLabel.textColor = BChatSDK.config.subTextColor;
+
+    cell.dateLabel.textColor = BChatSDK.config.threadSubtitleColor;
     cell.dateLabel.text = threadDate ? threadDate.threadTimeAgo : @"";
+    cell.dateLabel.font = BChatSDK.config.threadTimeFont;
     
     NSString * threadImagePath = [thread.meta metaValueForKey:bImageURL];
     NSURL * threadURL = threadImagePath && threadImagePath.length ? [NSURL URLWithString:threadImagePath] : Nil;

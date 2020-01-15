@@ -16,8 +16,7 @@
 
 @implementation BThreadCell
 
-- (void)awakeFromNib
-{
+- (void)awakeFromNib {
     self.profileImageView.layer.cornerRadius = self.profileImageView.fh/2.0;
 //    self.profileImageView.layer.borderColor = [UIColor darkGrayColor].CGColor;
 //    self.profileImageView.layer.borderWidth = 1.0;

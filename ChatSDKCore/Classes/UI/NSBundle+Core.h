@@ -143,6 +143,7 @@
 #define b_at_ @"b_at_"
 #define bToday @"Today"
 #define bYesterday @"Yesterday"
+#define bAgo @"ago"
 #define bYouLeftTheGroup @"bYouLeftTheGroup"
 #define bYouJoinedTheGroup @"bYouJoinedTheGroup"
 #define bRejoinGroup @"bRejoinGroup"

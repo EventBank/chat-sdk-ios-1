@@ -33,18 +33,46 @@
     [_sendBarView setMaxLines:BChatSDK.config.textInputViewMaxLines];
     [_sendBarView setMaxCharacters:BChatSDK.config.textInputViewMaxCharacters];
 
+    // Set the profile picture
+    [self updateProfilePicture];
+
     // Set the title
     [self updateTitle];
     
     // Set the subtitle
     [self updateSubtitle];
-    
-    [super setAudioEnabled: BChatSDK.audioMessage != Nil];
+
+    // EB_DISABLED
+    // for enabling the audio recording feature
+    [super setAudioEnabled: false]; // BChatSDK.audioMessage != Nil];
     
     // Add the initial batch of messages
     NSArray<PMessage> * messages = [BChatSDK.db loadMessagesForThread:_thread newest:BChatSDK.config.messagesToLoadPerBatch];
     messages = [messages sortedArrayUsingComparator:[BMessageSorter oldestFirst]];
     [self setMessages:messages scrollToBottom:NO animate:NO force: YES];
+
+    UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 34.0, 34.0)];
+    [backButton addTarget:self
+               action:@selector(back)
+     forControlEvents:UIControlEventTouchUpInside];
+    [backButton setImage:BChatSDK.config.backImage forState:UIControlStateNormal];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+
+    UIButton *optionButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 34.0, 34.0)];
+    [optionButton addTarget:self
+               action:@selector(displayOptions)
+     forControlEvents:UIControlEventTouchUpInside];
+    [optionButton setImage:BChatSDK.config.actionImage forState:UIControlStateNormal];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:optionButton];
+}
+
+- (void) back {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+// show more options like (delete conversation)
+- (void) displayOptions {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void) updateSubtitle {
@@ -154,6 +182,20 @@
     [self reloadData];
 }
 
+- (void) updateProfilePicture {
+    NSString * threadImagePath = [_thread.meta metaValueForKey:bImageURL];
+    NSURL * threadURL = threadImagePath && threadImagePath.length ? [NSURL URLWithString:threadImagePath] : Nil;
+
+    if (threadURL) {
+        [self setProfilePicture:threadURL picture:nil];
+    } else {
+        [_thread imageForThread].thenOnMain(^id(UIImage * image) {
+            [self setProfilePicture:threadURL picture:image];
+            return Nil;
+        }, Nil);
+    }
+}
+
 -(void) updateTitle {
     [self setTitle:_thread.displayName ? _thread.displayName : [NSBundle t: bDefaultThreadName]];
 }
@@ -169,7 +211,6 @@
     _usersViewLoaded = NO;
     
     [self addUserToPublicThreadIfNecessary];
-    
 }
 
 -(void) addUserToPublicThreadIfNecessary {

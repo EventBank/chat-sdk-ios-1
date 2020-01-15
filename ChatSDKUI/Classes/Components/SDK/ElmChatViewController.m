@@ -46,11 +46,12 @@
         _tapRecognizer.enabled = NO;
         [self.view addGestureRecognizer:_tapRecognizer];
         
+        // EB_DISABLED
         // When a user taps the title bar we want to know to show the options screen
-        if (BChatSDK.config.userChatInfoEnabled) {
+        /*if (BChatSDK.config.userChatInfoEnabled) {
             UITapGestureRecognizer * titleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navigationBarTapped)];
             [self.navigationItem.titleView addGestureRecognizer:titleTapRecognizer];
-        }
+        }*/
         
         _notificationList = [BNotificationObserverList new];
         
@@ -82,7 +83,6 @@
     
 //    tableView.layer.borderColor = [UIColor redColor].CGColor;
 //    tableView.layer.borderWidth = 2;
-    
 }
 
 -(void) registerMessageCells {
@@ -96,22 +96,58 @@
 // 2 - Show's a message or the list of usersBTextInputView
 // 3 - Show's who's typing
 -(void) setupNavigationBar {
-    
     UIView * containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 220, 40)];
+
+    _profilePicture = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 34, 34)];
+    _profilePicture.contentMode = UIViewContentModeScaleAspectFill;
+    _profilePicture.clipsToBounds = YES;
+    _profilePicture.layer.cornerRadius = 17;
+
+    [containerView addSubview:_profilePicture];
+
+    _profilePicture.keepHeight.equal = 34;
+    _profilePicture.keepWidth.equal = 34;
+
+    UIView * indicatorBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 14, 14)];
+    indicatorBackgroundView.backgroundColor = [UIColor whiteColor];
+    indicatorBackgroundView.layer.cornerRadius = 7;
+
+    [containerView addSubview:indicatorBackgroundView];
+
+    indicatorBackgroundView.keepHeight.equal = 14;
+    indicatorBackgroundView.keepWidth.equal = 14;
+    indicatorBackgroundView.keepTopAlignTo(_profilePicture);
+    indicatorBackgroundView.keepLeftAlignTo(_profilePicture);
+    indicatorBackgroundView.keepLeftInset.equal = -4;
+
+    _indicatorView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 8, 8)];
+    _indicatorView.backgroundColor = [UIColor greenColor];
+    _indicatorView.layer.cornerRadius = 4;
+
+    [containerView addSubview:_indicatorView];
+
+    _indicatorView.keepHeight.equal = 8;
+    _indicatorView.keepWidth.equal = 8;
+    _indicatorView.keepTopAlignTo(_profilePicture);
+    _indicatorView.keepLeftAlignTo(_profilePicture);
+    _indicatorView.keepTopInset.equal = 3;
+    _indicatorView.keepLeftInset.equal = -1;
     
     _titleLabel = [[UILabel alloc] init];
-    
     _titleLabel.text = [NSBundle t: bThread];
-    _titleLabel.textAlignment = NSTextAlignmentCenter;
-    _titleLabel.font = [UIFont boldSystemFontOfSize:_titleLabel.font.pointSize];
+    _titleLabel.textAlignment = NSTextAlignmentLeft; // NSTextAlignmentCenter;
+    _titleLabel.font = BChatSDK.config.messageNameFont;
     
     [containerView addSubview:_titleLabel];
+    
+    _titleLabel.keepWidth.equal = 200;
     _titleLabel.keepInsets.equal = 0;
     _titleLabel.keepBottomInset.equal = 15;
+    _titleLabel.keepLeftInset.equal = 42;
     
     _subtitleLabel = [[UILabel alloc] init];
-    _subtitleLabel.textAlignment = NSTextAlignmentCenter;
-    _subtitleLabel.font = [UIFont italicSystemFontOfSize:12.0];
+    _subtitleLabel.textAlignment = NSTextAlignmentLeft; // NSTextAlignmentCenter;
+    _subtitleLabel.font = BChatSDK.config.messageTimeFont;
     _subtitleLabel.textColor = [UIColor lightGrayColor];
     
     [containerView addSubview:_subtitleLabel];
@@ -119,9 +155,12 @@
     _subtitleLabel.keepHeight.equal = 15;
     _subtitleLabel.keepWidth.equal = 200;
     _subtitleLabel.keepBottomInset.equal = 0;
+    _subtitleLabel.keepLeftInset.equal = 42;
     _subtitleLabel.keepHorizontalCenter.equal = 0.5;
     
     [self.navigationItem setTitleView:containerView];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    [self.navigationController.navigationBar.layer setMasksToBounds:false];
 }
 
 // The options handler is responsible for displaying options to the user
@@ -140,6 +179,22 @@
     
     _keyboardOverlay.alpha = 0;
     _keyboardOverlay.userInteractionEnabled = NO;
+}
+
+- (void) setProfilePicture: (NSURL *) url picture: (UIImage *) image {
+    if (image == nil) {
+        [_profilePicture sd_setImageWithURL:url placeholderImage:BChatSDK.config.defaultBlankAvatar];
+    } else {
+        [_profilePicture sd_setImageWithURL:url placeholderImage:image];
+    }
+//    if (user == nil) {
+//        _profilePicture.image = BChatSDK.config.defaultBlankAvatar;
+//    } else {
+//        _profilePicture.image = user.imageURL;
+//    }
+////    if (_profilePicture.image != nil) return
+////
+//    [_profilePicture loadAvatar:user];
 }
 
 -(void) setTitle: (NSString *) title {
@@ -673,11 +728,14 @@
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
+//    return YES;
+    return false;
 }
 
 // This only works for iOS8
 -(NSArray *)tableView:(UITableView *)tableView_ editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return nil;
+
     __weak __typeof__(self) weakSelf = self;
 
     id<PElmMessage> message = [self messageForIndexPath:indexPath];
@@ -691,8 +749,7 @@
         button.backgroundColor = [UIColor redColor];
         return @[button];
 
-    }
-    else {
+    } else {
         NSString * flagTitle = message.flagged.intValue ? [NSBundle t:bUnflag] : [NSBundle t:bFlag];
         
         UITableViewRowAction * button = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:flagTitle handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
@@ -709,7 +766,6 @@
         
         return @[button];
     }
-    
 }
 
 #pragma Handle keyboard

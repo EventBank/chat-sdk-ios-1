@@ -43,7 +43,9 @@
     
     // Typing Indicator
     NSTimer * _typingTimer;
-
+    
+    UIImageView * _profilePicture;
+    UIView * _indicatorView;
     UILabel * _titleLabel;
     UILabel * _subtitleLabel;
     NSString * _subtitleText;
@@ -73,6 +75,8 @@
 
 -(instancetype) initWithDelegate: (id<ElmChatViewDelegate>) delegate;
 
+- (void) setProfilePicture: (NSURL *) url picture: (UIImage *) image;
+- (void) setIndicatorColor;
 -(void) setTitle: (NSString *) title;
 -(void) setSubtitle: (NSString *) subtitle;
 

@@ -45,41 +45,18 @@
         _placeholderColor = [UIColor darkGrayColor];
         _textColor = [UIColor blackColor];
 
-        // Create an options button which shows an action sheet
-        _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [self addSubview:_optionsButton];
-
         _textView = [[HKWTextView alloc] init];
+        [self addSubview: _textView];
+
         // If we use the mentions functionality we need to set the external delegate
         // This is the way to set the UITextView delegate to keep mentions functionality working
         _textView.simpleDelegate = self;
-      
-        [self addSubview: _textView];
-
-        // Add a send button
-        _sendButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [self addSubview: _sendButton];
-        
-        [_optionsButton setImage:[NSBundle uiImageNamed:@"icn_24_options.png"] forState:UIControlStateNormal];
-        [_optionsButton setImage:[NSBundle uiImageNamed:@"icn_24_keyboard.png"] forState:UIControlStateSelected];
-        
-        [_optionsButton addTarget:self action:@selector(optionsButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        
-        NSString * sendButtonTitle = [NSBundle t:bSend];
-        [_sendButton setTitle:sendButtonTitle forState:UIControlStateNormal];
-        
-        [_sendButton addTarget:self action:@selector(sendButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        [_sendButton addTarget:self action:@selector(sendButtonHeld) forControlEvents:UIControlEventTouchDown];
-        
-        // We don't want to send a message if they touch up outside the button area
-        [_sendButton addTarget:self action:@selector(sendButtonCancelled) forControlEvents:UIControlEventTouchUpOutside];
-        
         _textView.scrollEnabled = YES;
         _textView.backgroundColor = [UIColor clearColor];
-        
+
         // For some reason using scrollEnabled = NO causes probalems
         _textView.bounces = NO;
-        
+
         // Adjust the insets to make the text closer to the outside of the
         // box - ios6 is slightly different from ios7
         if ([UIDevice currentDevice].systemVersion.intValue < 7) {
@@ -89,42 +66,72 @@
             _textView.contentInset = UIEdgeInsetsMake(-6.0, -1.0, -6.0, 0.0);
         }
 
-        // Constrain the elements
-        _optionsButton.keepLeftInset.equal = bMargin +keepRequired;
-
-        _optionsButton.keepBottomInset.equal = 8.0;
-        _optionsButton.keepHeight.equal = 24;
-        
-        // If the user has no chat options available then remove the chat option button width
-        _optionsButton.keepWidth.equal = BChatSDK.ui.chatOptions.count ? 24 : 0;
-        
-        _optionsButton.translatesAutoresizingMaskIntoConstraints = NO;
-        
-        _sendButton.keepRightInset.equal = bMargin;
-        _sendButton.keepBottomInset.equal = 0;
-        _sendButton.keepHeight.equal = 40;
-        _sendButton.keepWidth.equal = 48;
-        _sendButton.translatesAutoresizingMaskIntoConstraints = NO;
-                
-        _textView.keepLeftOffsetTo(_optionsButton).equal = bMargin;
-        _textView.keepRightOffsetTo(_sendButton).equal = bMargin;
-        _textView.keepBottomInset.equal = bMargin;
-        _textView.keepTopInset.equal = bMargin;
-        _textView.translatesAutoresizingMaskIntoConstraints = NO;
-
         // Create a placeholder text label
         _placeholderLabel = [[UILabel alloc] init];
         [self addSubview:_placeholderLabel];
+
+        [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
+        [_placeholderLabel setTextColor:[UIColor grayColor]];
+        [_placeholderLabel setText:[NSBundle t:bWriteSomething]];
+
+        // Create an options button which shows an action sheet
+        _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self addSubview:_optionsButton];
+
+        [_optionsButton setImage:BChatSDK.config.attachmentImage forState:UIControlStateNormal];
+//        [_optionsButton setImage:[NSBundle uiImageNamed:@"icn_24_keyboard.png"] forState:UIControlStateSelected];
+
+//        // If the user has no chat options available then remove the chat option button width
+//        _optionsButton.keepWidth.equal = BChatSDK.ui.chatOptions.count ? 24 : 0;
+
+        [_optionsButton addTarget:self action:@selector(optionsButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+
+        // Add a send button
+        _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_sendButton setImage:BChatSDK.config.sendImage forState:UIControlStateNormal];
+//        NSString * sendButtonTitle = [NSBundle t:bSend];
+//        [_sendButton setTitle:sendButtonTitle forState:UIControlStateNormal];
+        [self addSubview: _sendButton];
+
+//        [_sendButton setImage:BChatSDK.config.backImage forState:UIControlStateNormal];
+//        [_sendButton setTintColor:[UIColor blueColor]];
+        
+        [_sendButton addTarget:self action:@selector(sendButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+//        [_sendButton addTarget:self action:@selector(sendButtonHeld) forControlEvents:UIControlEventTouchDown];
+        
+        // We don't want to send a message if they touch up outside the button area
+//        [_sendButton addTarget:self action:@selector(sendButtonCancelled) forControlEvents:UIControlEventTouchUpOutside];
+
+        // Constrain the elements
+        _textView.keepLeftInset.equal = bMargin + keepRequired;
+//        _textView.keepLeftOffsetTo(_optionsButton).equal = bMargin;
+
+//        _textView.keepRightOffsetTo(_optionsButton).equal = bMargin;
+//        _textView.keepRightOffsetTo(_sendButton).equal = bMargin;
+
+        _textView.keepBottomInset.equal = bMargin;
+        _textView.keepTopInset.equal = bMargin;
+        _textView.translatesAutoresizingMaskIntoConstraints = NO;
         
         _placeholderLabel.keepBottomInset.equal = 0;
         _placeholderLabel.keepTopInset.equal = 0;
-        _placeholderLabel.keepLeftOffsetTo(_optionsButton).equal = bMargin + 4;
+        _placeholderLabel.keepLeftInset.equal = bMargin + keepRequired + 4;
+//        _placeholderLabel.keepLeftOffsetTo(_optionsButton).equal = bMargin + 4;
         _placeholderLabel.keepWidth.equal = 200;
-        [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
-        
-        [_placeholderLabel setTextColor:_placeholderColor];
-        
-        [_placeholderLabel setText:[NSBundle t:bWriteSomething]];
+
+        _optionsButton.keepLeftOffsetTo(_textView).equal = bMargin;
+//        _optionsButton.keepLeftInset.equal = bMargin +keepRequired;
+        _optionsButton.keepRightOffsetTo(_sendButton).equal = bMargin;
+
+        _optionsButton.keepBottomInset.equal = 0;
+        _optionsButton.keepHeight.equal = 48;
+        _optionsButton.translatesAutoresizingMaskIntoConstraints = NO;
+
+        _sendButton.keepRightInset.equal = bMargin;
+        _sendButton.keepBottomInset.equal = 0;
+        _sendButton.keepHeight.equal = 48;
+        _sendButton.keepWidth.equal = 48;
+        _sendButton.translatesAutoresizingMaskIntoConstraints = NO;
         
         [self setFont:[UIFont systemFontOfSize:bFontSize]];
         
@@ -174,10 +181,9 @@
         [_sendButton setTitle:Nil forState:UIControlStateNormal];
         [_sendButton setImage:[NSBundle uiImageNamed: @"icn_24_mic.png"]
                      forState:UIControlStateNormal];
-    }
-    else {
+    } else {
         [_sendButton setTitle:[NSBundle t:bSend] forState:UIControlStateNormal];
-        [_sendButton setImage:Nil forState:UIControlStateNormal];
+        [_sendButton setImage:BChatSDK.config.sendImage forState:UIControlStateNormal];
     }
 }
 
