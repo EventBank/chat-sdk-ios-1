@@ -33,13 +33,13 @@
 
 // If we create it with a thread then we look at who is in the thread and make sure they don't come up on the lists
 // If we are creating a new thread then we don't mind
-
 -(instancetype) initWithUsersToExclude: (NSArray *) users onComplete: (void(^)(NSArray * users, NSString * name)) action {
     if ((self = [self init])) {
         self.title = [NSBundle t:bPickFriends];
         [_contactsToExclude addObjectsFromArray:users];
         self.usersToInvite = action;
     }
+
     return self;
 }
 
@@ -51,6 +51,7 @@
         _contacts = [NSMutableArray new];
         _contactsToExclude = [NSMutableArray new];
     }
+
     return self;
 }
 
@@ -91,11 +92,9 @@
 -(NSString *) getRightBarButtonActionTitle {
     if (self.rightBarButtonActionTitle) {
         return self.rightBarButtonActionTitle;
-    }
-    else if (_selectedContacts.count <= 1) {
+    } else if (_selectedContacts.count <= 1) {
         return [NSBundle t: bCompose];
-    }
-    else {
+    } else {
         return [NSBundle t: bCreateGroup];
     }
 }
@@ -126,6 +125,7 @@
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     NSString * newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
     self.navigationItem.rightBarButtonItem.enabled = newString.length;
+
     return YES;
 }
 
@@ -134,6 +134,7 @@
         groupNameView.keepTopInset.equal = hidden ? -46 : 0;
         groupNameView.alpha = hidden ? 0 : 1;
     }];
+
     if (!hidden) {
         self.navigationItem.rightBarButtonItem.enabled = groupNameTextField.text.length;
     }
@@ -145,13 +146,11 @@
 }
 
 -(void) composeMessage {
-    
     if (!_selectedContacts.count) {
         [UIView alertWithTitle:[NSBundle t:bInvalidSelection]
                    withMessage:[NSBundle t:bSelectAtLeastOneFriend]];
         return;
-    }
-    else {
+    } else {
         [self dismissViewControllerAnimated:YES completion:^{
             if (self.usersToInvite != Nil) {
                 self.usersToInvite(_selectedContacts, groupNameTextField.text);
@@ -170,11 +169,11 @@
     if (section == bContactsSection) {
         return _contacts.count;
     }
+
     return 0;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    
     if (section == bContactsSection) {
         return _contacts.count ? [NSBundle t:bContacts] : @"";
     }
@@ -183,9 +182,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView_ cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     BUserCell * cell = [tableView_ dequeueReusableCellWithIdentifier:bUserCellIdentifier];
-    
     
     id<PUser> user;
     if (indexPath.section == bContactsSection) {
@@ -202,7 +199,6 @@
 }
 
 - (void)tableView:(UITableView *)tableView_ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     if (indexPath.section == bContactsSection) {
         [self selectUser:_contacts[indexPath.row]];
     }
@@ -232,7 +228,6 @@
 
 // This is when we press enter in the text field
 - (void)tokenField:(VENTokenField *)tokenField didEnterText:(NSString *)text {
-    
     [_tokenField reloadData];
     [self reloadData];
     
@@ -241,7 +236,6 @@
 
 // This is when we delete a token
 - (void)tokenField:(VENTokenField *)tokenField didDeleteTokenAtIndex:(NSUInteger)index {
-    
     [self deselectUserWithName:[self.names objectAtIndex:index]];
     
     [UIView animateWithDuration:0.2 animations:^{
@@ -260,7 +254,6 @@
 }
 
 - (void) selectUser: (id<PUser>) user {
-    
     if(_selectedContacts.count < maximumSelectedUsers || maximumSelectedUsers <= 0) {
         [_selectedContacts addObject:user];
         
@@ -273,12 +266,10 @@
         
         [self reloadData];
     }
-    
 }
 
 // TODO: This will fail if there are two users with the same name...
 - (void) deselectUserWithName: (NSString *) name {
-    
     // Get the user we are removing
     for (id<PUser> user in _selectedContacts) {
         if ([name caseInsensitiveCompare:user.name] == NSOrderedSame) {
@@ -302,15 +293,12 @@
     [tableView reloadData];
 }
 
--(void) reloadData {
-    
-    // Load contacts
+-(void) reloadData { // Load contacts
     [_contacts removeAllObjects];
     
     if(_overrideContacts == Nil) {
         [_contacts addObjectsFromArray:[BChatSDK.contact contactsWithType:bUserConnectionTypeContact]];
-    }
-    else {
+    } else {
         [_contacts addObjectsFromArray: self.overrideContacts()];
     }
     
@@ -326,10 +314,11 @@
     }
     
     [tableView reloadData];
-    [self updateRightBarButtonActionTitle];
-    self.navigationItem.rightBarButtonItem.enabled = _selectedContacts.count;
-}
 
+    // EB_DISABLE
+//    [self updateRightBarButtonActionTitle];
+//    self.navigationItem.rightBarButtonItem.enabled = _selectedContacts.count;
+}
 
 -(void) setUsersToExclude: (NSArray *) users {
     [_contactsToExclude removeAllObjects];
@@ -343,12 +332,13 @@
     [self reloadData];
 }
 
+- (NSArray *) getSelectedUsers {
+    return _selectedContacts;
+}
 
 #pragma keyboard notifications
 
--(void) keyboardWillShow: (NSNotification *) notification {
-    
-    // Get the keyboard size
+-(void) keyboardWillShow: (NSNotification *) notification { // Get the keyboard size
     CGRect keyboardBounds = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardBoundsConverted = [self.view convertRect:keyboardBounds toView:Nil];
     
@@ -371,9 +361,8 @@
     [UIView commitAnimations];
 }
 
+// Reduced code as there were slight issues with teh table reloading
 -(void) keyboardWillHide: (NSNotification *) notification {
-    
-    // Reduced code as there were slight issues with teh table reloading
     tableView.keepBottomInset.equal = 0;
     [self.view setNeedsUpdateConstraints];
 }
@@ -386,7 +375,5 @@
     BOOL connected = BChatSDK.connectivity.isConnected;
     self.navigationItem.rightBarButtonItem.enabled = connected;
 }
-
-
 
 @end

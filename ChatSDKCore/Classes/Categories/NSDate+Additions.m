@@ -21,16 +21,17 @@
     NSDateComponents *otherDay = [[NSCalendar currentCalendar] components:NSCalendarUnitDay fromDate:self];
     NSDateComponents *today = [[NSCalendar currentCalendar] components:NSCalendarUnitDay fromDate:[NSDate date]];
 
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSUInteger unitFlags = NSSecondCalendarUnit | NSMinuteCalendarUnit | NSHourCalendarUnit | NSYearCalendarUnit | NSDayCalendarUnit;
+    NSDateComponents *components = [gregorian components:unitFlags
+                                                fromDate:[NSDate date]
+                                                  toDate:self
+                                                 options:0];
+
     if (self.isToday) { // when the date/time is within 24hrs
-        NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        NSUInteger unitFlags = NSSecondCalendarUnit | NSMinuteCalendarUnit | NSHourCalendarUnit;
-        NSDateComponents *components = [gregorian components:unitFlags
-                                                    fromDate:self
-                                                      toDate:[NSDate date]
-                                                     options:0];
-        NSInteger seconds = [components second];
-        NSInteger minutes = [components minute];
-        NSInteger hours = [components hour];
+        int seconds = abs([components second]);
+        int minutes = abs([components minute]);
+        int hours = abs([components hour]);
 
         if (hours >= 1) { // hours
             return [NSString stringWithFormat:@"%dh %@", hours, [NSBundle t: bAgo]];
@@ -44,12 +45,17 @@
         // Then check if it was exactly yesterday
         if ([self daysAgo] < 3 && today.day == otherDay.day + 1) {
             time = [NSBundle t: bYesterday];
-//        } else if (self.daysAgo > 1 && self.daysAgo < 7) {
-//            [formatter setDateFormat:@"EEEE"];
-//            time = [formatter stringFromDate:self];
+        } else if (self.daysAgo > 1 && self.daysAgo < 7) {
+            int days = abs([components day]);
+            time = [NSString stringWithFormat:@"%dd %@", days, [NSBundle t: bAgo]];
         } else { // if (self.daysAgo >= 7) {
-//            [formatter setDateFormat:@"dd/MM/yy"];
-            [formatter setDateFormat:@"MMM dd"];
+            int years = abs([components year]);
+            if (years > 0) { // year older
+                [formatter setDateFormat:@"MMM dd, yyyy"];
+            } else {
+                [formatter setDateFormat:@"MMM dd"];
+            }
+
             time = [formatter stringFromDate:self];
         }
     }
@@ -84,11 +90,22 @@
         day = [NSBundle t: bToday];
     } else if (self.isYesterday) {
         day = [NSBundle t: bYesterday];
-    } else if (self.daysAgo < 7) {
+    } /* else if (self.daysAgo < 7) {
         [formatter setDateFormat:@"EEE"];
         day = [formatter stringFromDate:self];
-    } else {
-        [formatter setDateFormat:@"MM/yy"];
+    } */ else {
+        NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDateComponents *components = [gregorian components:NSYearCalendarUnit
+                                                    fromDate:[NSDate date]
+                                                      toDate:self
+                                                     options:0];
+
+        int years = abs([components year]);
+        if (years > 0) { // year older
+            [formatter setDateFormat:@"MMM dd, yyyy"];
+        } else {
+            [formatter setDateFormat:@"MMM dd"];
+        }
         day = [formatter stringFromDate:self];
     }
     

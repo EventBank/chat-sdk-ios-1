@@ -36,7 +36,12 @@
     [self.profileImageView loadAvatar:user];
     
     self.title.text = user.name;
+    self.title.textColor = BChatSDK.config.threadTitleColor;
+    self.title.font = BChatSDK.config.threadTitleFont;
+
     self.subtitle.text = user.statusText;
+    self.subtitle.textColor = BChatSDK.config.threadSubtitleColor;
+    self.subtitle.font = BChatSDK.config.threadSubtitleFont;
     
     if (user.availability && user.availability.length && user.online.boolValue) {
         [self setAvailability:user.availability];

@@ -21,7 +21,6 @@
     NSMutableDictionary * _threadTypingMessages;
     
     BNotificationObserverList * _notificationList;
-
 }
 
 @property (nonatomic, readwrite) UITableView *tableView;

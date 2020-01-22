@@ -50,5 +50,6 @@
 
 -(void) setUsersToExclude: (NSArray *) users;
 -(void) setSelectedUsers: (NSArray *) users;
+- (NSArray *) getSelectedUsers;
 
 @end

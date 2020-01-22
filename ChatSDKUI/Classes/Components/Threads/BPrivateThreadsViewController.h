@@ -10,7 +10,9 @@
 
 @class BChatViewController;
 
-@interface BPrivateThreadsViewController : BThreadsViewController {
+@interface BPrivateThreadsViewController : BThreadsViewController <UISearchBarDelegate> {
+    NSMutableArray *filteredArray;
+    UISearchBar * _searchBar;
 }
 
 @end
