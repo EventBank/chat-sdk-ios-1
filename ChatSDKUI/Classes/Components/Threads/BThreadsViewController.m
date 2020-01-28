@@ -262,7 +262,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 100;
+    return 65;
 }
 
 // Called when a thread is to be deleted

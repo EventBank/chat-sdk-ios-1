@@ -57,7 +57,9 @@
     [_searchBar setBarTintColor:[UIColor whiteColor]]; // outer BG
     [_searchBar setSearchBarStyle:UISearchBarStyleMinimal]; // UISearchBarStyleMinimal (with gray inner BG)
     [_searchBar setPlaceholder:@"Search"];
-    UITextField *searchTextField = [_searchBar valueForKey:@"_searchField"];
+
+    //                                                      iOS 13 (or newer) ObjC code : older code
+    UITextField *searchTextField = (@available(iOS 13, *)) ? _searchBar.searchTextField : [_searchBar valueForKey:@"_searchField"];
     if ([searchTextField respondsToSelector:@selector(setAttributedPlaceholder:)]) {
         [searchTextField setAttributedPlaceholder:[[NSAttributedString alloc]
                                    initWithString:@"Search"
@@ -65,7 +67,6 @@
         [searchTextField.layer setBackgroundColor:[UIColor whiteColor].CGColor]; // inner BG
     }
     self.tableView.tableHeaderView = _searchBar;
-//    [self.tableView.tableHeaderView.layer setBorderWidth:0];
 
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(searchBarSearchButtonClicked:)];
     [tap setCancelsTouchesInView:false];
@@ -104,10 +105,6 @@
 }
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [_searchBar resignFirstResponder];
-}
-
-- (void) dismissKeyboard {
     [_searchBar resignFirstResponder];
 }
 

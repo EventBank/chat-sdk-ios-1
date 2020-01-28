@@ -140,7 +140,7 @@
     
     [containerView addSubview:_titleLabel];
     
-    _titleLabel.keepWidth.equal = 200;
+    _titleLabel.keepWidth.equal = 220;
     _titleLabel.keepInsets.equal = 0;
     _titleLabel.keepBottomInset.equal = 15;
     _titleLabel.keepLeftInset.equal = 42;
@@ -153,11 +153,11 @@
     [containerView addSubview:_subtitleLabel];
     
     _subtitleLabel.keepHeight.equal = 15;
-    _subtitleLabel.keepWidth.equal = 200;
+    _subtitleLabel.keepWidth.equal = 220;
     _subtitleLabel.keepBottomInset.equal = 0;
     _subtitleLabel.keepLeftInset.equal = 42;
     _subtitleLabel.keepHorizontalCenter.equal = 0.5;
-    
+
     [self.navigationItem setTitleView:containerView];
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     [self.navigationController.navigationBar.layer setMasksToBounds:false];

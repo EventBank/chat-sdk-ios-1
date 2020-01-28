@@ -27,7 +27,7 @@
     [_delegate hideKeyboard];
     UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:[NSBundle t:bOptions]
                                                               delegate:self
-                                                     cancelButtonTitle:[NSBundle t:bOk]
+                                                     cancelButtonTitle:[NSBundle t:bCancel]
                                                 destructiveButtonTitle:Nil
                                                      otherButtonTitles:Nil];
     
@@ -36,10 +36,10 @@
             [actionSheet addButtonWithTitle:option.title];
         }
         [actionSheet showInView:_delegate.currentViewController.view];
-    }
-    else {
+    } else {
         // TODO: hide the option button
     }
+    
     return NO;
 }
 

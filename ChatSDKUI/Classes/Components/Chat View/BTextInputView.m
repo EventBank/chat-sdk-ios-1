@@ -32,105 +32,113 @@
 -(instancetype) initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        
-//        self.barTintColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.7];
         self.backgroundColor = [UIColor whiteColor];
         
         // Decide how many lines the message should have
         minLines = bMinLines;
         maxLines = bMaxLines;
         maxCharacters = bMaxCharacters;
-        
-        // Set the text color
-        _placeholderColor = [UIColor darkGrayColor];
-        _textColor = [UIColor blackColor];
 
-        _textView = [[HKWTextView alloc] init];
-        [self addSubview: _textView];
+        // gray background
+        UIView * bg = [[UIView alloc] initWithFrame:CGRectZero];
+        [bg setBackgroundColor: [UIColor colorWithRed:242/255.0 green:246/255.0 blue:249/255.0 alpha:1]];
+        bg.layer.cornerRadius = 6;
+        [self addSubview:bg];
 
         // If we use the mentions functionality we need to set the external delegate
         // This is the way to set the UITextView delegate to keep mentions functionality working
+        _textView = [[HKWTextView alloc] init];
+//        _textView = [[UITextView alloc] init];
         _textView.simpleDelegate = self;
-        _textView.scrollEnabled = YES;
+        _textView.scrollEnabled = false; // YES;
         _textView.backgroundColor = [UIColor clearColor];
-
-        // For some reason using scrollEnabled = NO causes probalems
-        _textView.bounces = NO;
+        _textView.bounces = NO; // For some reason using scrollEnabled = NO causes probalems
+        _textView.contentInset = UIEdgeInsetsMake(0.0, bMargin, 0.0, 0.0);
+//        _textView.textContainer.maximumNumberOfLines = 1;
 
         // Adjust the insets to make the text closer to the outside of the
         // box - ios6 is slightly different from ios7
-        if ([UIDevice currentDevice].systemVersion.intValue < 7) {
-            _textView.contentInset = UIEdgeInsetsMake(-6.0, -4.0, -6.0, 0.0);
-        }
-        else {
-            _textView.contentInset = UIEdgeInsetsMake(-6.0, -1.0, -6.0, 0.0);
-        }
+//        if ([UIDevice currentDevice].systemVersion.intValue < 7) {
+//            _textView.contentInset = UIEdgeInsetsMake(bMargin, bMargin, bMargin, 0.0);
+//        } else {
+//            _textView.contentInset = UIEdgeInsetsMake(-6.0, -1.0, -6.0, 40.0);
+//        }
+        [self addSubview: _textView];
 
         // Create a placeholder text label
         _placeholderLabel = [[UILabel alloc] init];
-        [self addSubview:_placeholderLabel];
-
         [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
         [_placeholderLabel setTextColor:[UIColor grayColor]];
         [_placeholderLabel setText:[NSBundle t:bWriteSomething]];
+        [self addSubview:_placeholderLabel];
 
         // Create an options button which shows an action sheet
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [self addSubview:_optionsButton];
-
         [_optionsButton setImage:BChatSDK.config.attachmentImage forState:UIControlStateNormal];
+        [_optionsButton addTarget:self action:@selector(optionsButtonPressed) forControlEvents:UIControlEventTouchUpInside];
 //        [_optionsButton setImage:[NSBundle uiImageNamed:@"icn_24_keyboard.png"] forState:UIControlStateSelected];
+        [self addSubview:_optionsButton];
 
 //        // If the user has no chat options available then remove the chat option button width
 //        _optionsButton.keepWidth.equal = BChatSDK.ui.chatOptions.count ? 24 : 0;
 
-        [_optionsButton addTarget:self action:@selector(optionsButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-
         // Add a send button
         _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_sendButton setImage:BChatSDK.config.sendImage forState:UIControlStateNormal];
-//        NSString * sendButtonTitle = [NSBundle t:bSend];
-//        [_sendButton setTitle:sendButtonTitle forState:UIControlStateNormal];
-        [self addSubview: _sendButton];
-
-//        [_sendButton setImage:BChatSDK.config.backImage forState:UIControlStateNormal];
-//        [_sendButton setTintColor:[UIColor blueColor]];
-        
         [_sendButton addTarget:self action:@selector(sendButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-//        [_sendButton addTarget:self action:@selector(sendButtonHeld) forControlEvents:UIControlEventTouchDown];
-        
-        // We don't want to send a message if they touch up outside the button area
-//        [_sendButton addTarget:self action:@selector(sendButtonCancelled) forControlEvents:UIControlEventTouchUpOutside];
+
+        //        NSString * sendButtonTitle = [NSBundle t:bSend];
+        //        [_sendButton setTitle:sendButtonTitle forState:UIControlStateNormal];
+
+        //        [_sendButton setImage:BChatSDK.config.backImage forState:UIControlStateNormal];
+        //        [_sendButton setTintColor:[UIColor blueColor]];
+
+        //        [_sendButton addTarget:self action:@selector(sendButtonHeld) forControlEvents:UIControlEventTouchDown];
+
+                // We don't want to send a message if they touch up outside the button area
+        //        [_sendButton addTarget:self action:@selector(sendButtonCancelled) forControlEvents:UIControlEventTouchUpOutside];
+        [self addSubview: _sendButton];
 
         // Constrain the elements
         _textView.keepLeftInset.equal = bMargin + keepRequired;
+        _textView.keepRightOffsetTo(_optionsButton).equal = -(bMargin);
+        _textView.keepBottomInset.equal = bMargin*0.75;
+        _textView.keepTopInset.equal = bMargin*0.75;
 //        _textView.keepLeftOffsetTo(_optionsButton).equal = bMargin;
-
 //        _textView.keepRightOffsetTo(_optionsButton).equal = bMargin;
-//        _textView.keepRightOffsetTo(_sendButton).equal = bMargin;
-
-        _textView.keepBottomInset.equal = bMargin;
-        _textView.keepTopInset.equal = bMargin;
         _textView.translatesAutoresizingMaskIntoConstraints = NO;
-        
+
+        bg.keepLeftInset.equal = bMargin + keepRequired;
+        bg.keepRightOffsetTo(_sendButton).equal = bMargin*0.5;
+        bg.keepBottomInset.equal = bMargin;
+        bg.keepTopInset.equal = bMargin;
+        bg.translatesAutoresizingMaskIntoConstraints = NO;
+
         _placeholderLabel.keepBottomInset.equal = 0;
         _placeholderLabel.keepTopInset.equal = 0;
-        _placeholderLabel.keepLeftInset.equal = bMargin + keepRequired + 4;
-//        _placeholderLabel.keepLeftOffsetTo(_optionsButton).equal = bMargin + 4;
+        _placeholderLabel.keepLeftInset.equal = bMargin*2.5 + keepRequired;
         _placeholderLabel.keepWidth.equal = 200;
+//        _placeholderLabel.keepLeftOffsetTo(_optionsButton).equal = bMargin + 4;
+        _placeholderLabel.translatesAutoresizingMaskIntoConstraints = NO;
 
-        _optionsButton.keepLeftOffsetTo(_textView).equal = bMargin;
-//        _optionsButton.keepLeftInset.equal = bMargin +keepRequired;
-        _optionsButton.keepRightOffsetTo(_sendButton).equal = bMargin;
-
-        _optionsButton.keepBottomInset.equal = 0;
+        _optionsButton.keepRightOffsetTo(_sendButton).equal = 0; // bMargin*0.65;
+//        _optionsButton.keepBottomInset.equal = 0;
+        _optionsButton.keepVerticalAlignTo(_sendButton);
+        _optionsButton.keepBottomInset.equal = bMargin;
+        _optionsButton.keepTopInset.equal = bMargin;
         _optionsButton.keepHeight.equal = 48;
+        _optionsButton.keepWidth.equal = 48;
+//        _optionsButton.keepRightAlignTo(_textView);
+//        _optionsButton.keepLeftInset.equal = bMargin +keepRequired;
+//        _optionsButton.keepLeftOffsetTo(_textView).equal = bMargin;
         _optionsButton.translatesAutoresizingMaskIntoConstraints = NO;
 
-        _sendButton.keepRightInset.equal = bMargin;
-        _sendButton.keepBottomInset.equal = 0;
-        _sendButton.keepHeight.equal = 48;
-        _sendButton.keepWidth.equal = 48;
+        _sendButton.keepRightInset.equal = 0; // bMargin + keepRequired;
+        _sendButton.keepVerticalAlignTo(_textView);
+        _sendButton.keepBottomInset.equal = -(bMargin/2);
+        _sendButton.keepTopInset.equal = -(bMargin/2);
+        _sendButton.keepHeight.equal = 64;
+        _sendButton.keepWidth.equal = 64;
         _sendButton.translatesAutoresizingMaskIntoConstraints = NO;
         
         [self setFont:[UIFont systemFontOfSize:bFontSize]];
@@ -143,19 +151,27 @@
         [BChatSDK.hook addHook:_internetConnectionHook withName:bHookInternetConnectivityDidChange];
         
         [self updateInterfaceForReachabilityStateChange];
-        
-        UIView * topMarginView = [[UIView alloc] initWithFrame:CGRectZero];
-        topMarginView.backgroundColor = [UIColor lightGrayColor];
-        
-        [self addSubview:topMarginView];
-        
-        topMarginView.keepTopInset.equal = 0 + keepRequired;
-        topMarginView.keepLeftInset.equal = 0 + keepRequired;
-        topMarginView.keepRightInset.equal = 0 + keepRequired;
-        topMarginView.keepHeight.equal = 0.5 + keepRequired;
+
+        self.layer.shadowColor = [UIColor lightGrayColor].CGColor;
+        self.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+        self.layer.shadowRadius = 5.0;
+        self.layer.shadowOpacity = 0.5;
+        self.layer.masksToBounds = false;
+
+        // borderline
+//        UIView * topMarginView = [[UIView alloc] initWithFrame:CGRectZero];
+//        topMarginView.backgroundColor = [UIColor lightGrayColor];
+//
+//        [self addSubview:topMarginView];
+//
+//        topMarginView.keepTopInset.equal = 0 + keepRequired;
+//        topMarginView.keepLeftInset.equal = 0 + keepRequired;
+//        topMarginView.keepRightInset.equal = 0 + keepRequired;
+//        topMarginView.keepHeight.equal = 0.5 + keepRequired;
         
         [self resizeToolbar];
     }
+
     return self;
 }
 
@@ -182,7 +198,7 @@
         [_sendButton setImage:[NSBundle uiImageNamed: @"icn_24_mic.png"]
                      forState:UIControlStateNormal];
     } else {
-        [_sendButton setTitle:[NSBundle t:bSend] forState:UIControlStateNormal];
+        [_sendButton setTitle:Nil /*[NSBundle t:bSend]*/ forState:UIControlStateNormal];
         [_sendButton setImage:BChatSDK.config.sendImage forState:UIControlStateNormal];
     }
 }
@@ -190,7 +206,6 @@
 #pragma Button Delegates
 
 -(void) sendButtonPressed {
-    
     if (_audioMaxLengthReached) {
         _audioMaxLengthReached = NO;
         return;
@@ -212,8 +227,7 @@
         
         _textView.text = @"";
         [self textViewDidChange:_textView];
-    }
-    else {
+    } else {
         [self sendAudioMessage];
     }
 }
@@ -232,10 +246,8 @@
     }
 }
 
--(void) sendAudioMessage {
-    // This is where the button is released so we want to finish recording and send
+-(void) sendAudioMessage { // This is where the button is released so we want to finish recording and send
     if (_sendBarDelegate) {
-        
         // Return the recording url and duration in an array
         NSURL * audioURL = [BAudioManager sharedManager].recorder.url;
         NSData * audioData = [NSData dataWithContentsOfURL:audioURL];
@@ -250,7 +262,6 @@
             [view makeToast:[NSBundle t:bHoldToSendAudioMessageError]
                         duration:2
                         position:[NSValue valueWithCGPoint: CGPointMake(view.frame.size.width / 2.0, view.frame.size.height - 120)]];
-            
         }
     }
 }
@@ -296,7 +307,6 @@
     [alert addAction:cancel];
     
     [self.sendBarDelegate.viewController presentViewController:alert animated:YES completion:Nil];
-
 }
 
 -(void) cancelRecordingToastTimer {
@@ -323,8 +333,7 @@
 -(void) optionsButtonPressed {
     if (_optionsButton.selected) {
         [self hideOptions];
-    }
-    else {
+    } else {
         [self showOptions];
     }
 }
@@ -353,8 +362,7 @@
 
 -(float) getTextBoxTextHeight {
     NSString * text = _textView.text;
-    
-    
+
     // If it ends in a new line this isn't included in the size so add an extra character
     if ([text hasSuffix:@"\n"] || [text isEqualToString:@""]) {
         text = [text stringByAppendingString:@"-"];
@@ -372,7 +380,6 @@
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    
     // Typing Indicator
     if (_sendBarDelegate && [_sendBarDelegate respondsToSelector:@selector(typing)]) {
         [_sendBarDelegate typing];
@@ -396,16 +403,13 @@
 }
 
 -(void) textViewDidChange:(UITextView *)textView {
-    
     // If there is text or if the audio is turned off
     if (textView.text.length || !_audioEnabled) {
         [self setMicButtonEnabled:NO sendButtonEnabled:textView.text.length];
-    }
-    else {
+    } else {
         [self setMicButtonEnabled:YES];
     }
-    
-    
+
     [self resizeToolbar];
 
     // If the text area is empty show the placeholder
@@ -413,7 +417,6 @@
 }
 
 -(void) resizeToolbar {
-    
     float originalHeight = self.keepHeight.equal;
     
 //    float newHeight = MAX(_textView.contentSize.height, _textView.font.lineHeight);//[self getTextBoxTextHeight];
@@ -424,7 +427,7 @@
 
     // Set the toolbar height - the text view will resize automatically
     // using autolayout
-    self.keepHeight.equal = bMargin * 2 + textBoxHeight;
+    self.keepHeight.equal = bMargin * 1.25 + textBoxHeight;
     
     float delta = self.keepHeight.equal - originalHeight;
     
@@ -447,8 +450,7 @@
     }
 }
 
-- (CGFloat)measureHeightOfUITextView:(UITextView *)textView
-{
+- (CGFloat)measureHeightOfUITextView:(UITextView *)textView {
     if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1)
     {
         // This is the code for iOS 7. contentSize no longer returns the correct value, so
@@ -492,9 +494,7 @@
         
         CGFloat measuredHeight = ceilf(CGRectGetHeight(size) + topBottomPadding);
         return measuredHeight;
-    }
-    else
-    {
+    } else {
         return textView.contentSize.height;
     }
 }

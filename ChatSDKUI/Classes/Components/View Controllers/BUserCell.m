@@ -22,9 +22,8 @@
 }
 
 -(void) setUser: (id<PUser>) user {
-    
     // TODO: Don't use absolute value
-    self.profileImageView.layer.cornerRadius = 22;
+    self.profileImageView.layer.cornerRadius = self.profileImageView.fh/2;
     self.profileImageView.clipsToBounds = YES;
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     self.accessoryType = UITableViewCellAccessoryNone; // If we don't set this then sometimes the cells don't refresh properly
