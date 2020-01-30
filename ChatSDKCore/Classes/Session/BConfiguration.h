@@ -169,8 +169,10 @@ typedef enum {
 @property (nonatomic, readwrite) UIFont * messageNameFont;
 
 @property (nonatomic, readwrite) UIFont * threadTitleFont;
+@property (nonatomic, readwrite) UIFont * threadUnreadTitleFont;
 @property (nonatomic, readwrite) UIFont * threadTimeFont;
 @property (nonatomic, readwrite) UIFont * threadSubtitleFont;
+@property (nonatomic, readwrite) UIFont * threadUnreadSubtitleFont;
 
 // Text color of thread title & subtitle: hex value like "FFFFFF"
 @property (nonatomic, readwrite) UIColor * threadTitleColor;
@@ -262,6 +264,10 @@ typedef enum {
 @property (nonatomic, readwrite) UIImage * actionImage;
 @property (nonatomic, readwrite) UIImage * attachmentImage;
 @property (nonatomic, readwrite) UIImage * sendImage;
+
+// status indicator
+@property (nonatomic, readwrite) NSString * onlineIndicatorColor;
+@property (nonatomic, readwrite) NSString * offlineIndicatorColor;
 
 +(BConfiguration *) configuration;
 

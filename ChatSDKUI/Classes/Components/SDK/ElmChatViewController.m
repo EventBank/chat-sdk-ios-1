@@ -121,7 +121,7 @@
     indicatorBackgroundView.keepLeftInset.equal = -4;
 
     _indicatorView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 8, 8)];
-    _indicatorView.backgroundColor = [UIColor greenColor];
+    _indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:BChatSDK.config.onlineIndicatorColor];
     _indicatorView.layer.cornerRadius = 4;
 
     [containerView addSubview:_indicatorView];
@@ -137,6 +137,7 @@
     _titleLabel.text = [NSBundle t: bThread];
     _titleLabel.textAlignment = NSTextAlignmentLeft; // NSTextAlignmentCenter;
     _titleLabel.font = BChatSDK.config.messageNameFont;
+    _titleLabel.textColor = BChatSDK.config.threadTitleColor;
     
     [containerView addSubview:_titleLabel];
     
@@ -148,7 +149,7 @@
     _subtitleLabel = [[UILabel alloc] init];
     _subtitleLabel.textAlignment = NSTextAlignmentLeft; // NSTextAlignmentCenter;
     _subtitleLabel.font = BChatSDK.config.messageTimeFont;
-    _subtitleLabel.textColor = [UIColor lightGrayColor];
+    _subtitleLabel.textColor = BChatSDK.config.messageColorTime;
     
     [containerView addSubview:_subtitleLabel];
     
@@ -159,8 +160,8 @@
     _subtitleLabel.keepHorizontalCenter.equal = 0.5;
 
     [self.navigationItem setTitleView:containerView];
-    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-    [self.navigationController.navigationBar.layer setMasksToBounds:false];
+//    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+//    [self.navigationController.navigationBar.layer setMasksToBounds:false];
 }
 
 // The options handler is responsible for displaying options to the user
@@ -204,6 +205,14 @@
 -(void) setSubtitle: (NSString *) subtitle {
     _subtitleText = subtitle;
     _subtitleLabel.text = subtitle;
+}
+
+-(void) setIsOnline: (BOOL) isOnline {
+    if (isOnline) {
+        _indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:BChatSDK.config.onlineIndicatorColor];
+    } else {
+        _indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:BChatSDK.config.offlineIndicatorColor];
+    }
 }
 
 -(void) addMessage: (id<PMessage>) message {

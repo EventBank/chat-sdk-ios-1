@@ -76,9 +76,9 @@
 -(instancetype) initWithDelegate: (id<ElmChatViewDelegate>) delegate;
 
 - (void) setProfilePicture: (NSURL *) url picture: (UIImage *) image;
-- (void) setIndicatorColor;
 -(void) setTitle: (NSString *) title;
 -(void) setSubtitle: (NSString *) subtitle;
+-(void) setIsOnline: (BOOL) isOnline;
 
 -(void) startTypingWithMessage: (NSString *) message;
 -(void) stopTyping;

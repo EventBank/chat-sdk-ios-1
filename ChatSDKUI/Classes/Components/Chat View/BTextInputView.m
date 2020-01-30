@@ -39,9 +39,8 @@
         maxLines = bMaxLines;
         maxCharacters = bMaxCharacters;
 
-        // gray background
         UIView * bg = [[UIView alloc] initWithFrame:CGRectZero];
-        [bg setBackgroundColor: [UIColor colorWithRed:242/255.0 green:246/255.0 blue:249/255.0 alpha:1]];
+        [bg setBackgroundColor: [BCoreUtilities colorWithHexString:BChatSDK.config.messageColorReply]];
         bg.layer.cornerRadius = 6;
         [self addSubview:bg];
 
@@ -52,8 +51,9 @@
         _textView.simpleDelegate = self;
         _textView.scrollEnabled = false; // YES;
         _textView.backgroundColor = [UIColor clearColor];
+        _textView.textColor = BChatSDK.config.messageColorTime;
         _textView.bounces = NO; // For some reason using scrollEnabled = NO causes probalems
-        _textView.contentInset = UIEdgeInsetsMake(0.0, bMargin, 0.0, 0.0);
+        _textView.contentInset = UIEdgeInsetsMake(0.0, bMargin, 0.0, bMargin/2);
 //        _textView.textContainer.maximumNumberOfLines = 1;
 
         // Adjust the insets to make the text closer to the outside of the
@@ -68,7 +68,7 @@
         // Create a placeholder text label
         _placeholderLabel = [[UILabel alloc] init];
         [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
-        [_placeholderLabel setTextColor:[UIColor grayColor]];
+        [_placeholderLabel setTextColor:BChatSDK.config.threadSubtitleColor];
         [_placeholderLabel setText:[NSBundle t:bWriteSomething]];
         [self addSubview:_placeholderLabel];
 
@@ -109,7 +109,7 @@
         _textView.translatesAutoresizingMaskIntoConstraints = NO;
 
         bg.keepLeftInset.equal = bMargin + keepRequired;
-        bg.keepRightOffsetTo(_sendButton).equal = bMargin*0.5;
+        bg.keepRightOffsetTo(_sendButton).equal = bMargin*0.25;
         bg.keepBottomInset.equal = bMargin;
         bg.keepTopInset.equal = bMargin;
         bg.translatesAutoresizingMaskIntoConstraints = NO;

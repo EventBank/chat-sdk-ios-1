@@ -11,8 +11,8 @@
 #import <ChatSDK/Core.h>
 #import <ChatSDK/UI.h>
 
-#define bOnlineIndicatorColor @"32a852"
-#define bOfflineIndicatorColor @"7c95ab"
+#define bOnlineIndicatorColor @"00B832"
+#define bOfflineIndicatorColor @"7F94AC"
 
 @implementation BThreadCell
 
@@ -44,13 +44,12 @@
 //        self.profileImageView.layer.borderColor = [BCoreUtilities colorWithHexString:bOnlineIndicatorColor].CGColor;
 //        self.profileImageView.layer.borderWidth = 2.0;
 
-        self.indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:bOnlineIndicatorColor];
-    }
-    else {
+        self.indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:BChatSDK.config.onlineIndicatorColor];
+    } else {
 //        self.profileImageView.layer.borderColor = [UIColor darkGrayColor].CGColor;
 //        self.profileImageView.layer.borderWidth = 1.0;
         
-        self.indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:bOfflineIndicatorColor];
+        self.indicatorView.backgroundColor = [BCoreUtilities colorWithHexString:BChatSDK.config.offlineIndicatorColor];
     }
 }
 

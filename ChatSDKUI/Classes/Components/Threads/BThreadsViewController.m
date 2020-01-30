@@ -13,8 +13,6 @@
 #import <ChatSDK/Core.h>
 #import <ChatSDK/UI.h>
 
-#define bCellIdentifier @"bCellIdentifier"
-
 @interface BThreadsViewController ()
 
 @end
@@ -175,14 +173,15 @@
 
     cell.titleLabel.textColor = BChatSDK.config.threadTitleColor;
     cell.titleLabel.text = thread.displayName ? thread.displayName : [NSBundle t: bDefaultThreadName];
-    cell.titleLabel.font = BChatSDK.config.threadTitleFont;
-
-    cell.messageTextView.font = BChatSDK.config.threadSubtitleFont;
 
     int unreadCount = thread.unreadMessageCount;
     if (unreadCount > 0) {
+        cell.titleLabel.font = BChatSDK.config.threadUnreadTitleFont;
+        cell.messageTextView.font = BChatSDK.config.threadUnreadSubtitleFont;
         cell.messageTextView.textColor = BChatSDK.config.threadUnreadSubtitleColor;
     } else {
+        cell.titleLabel.font = BChatSDK.config.threadTitleFont;
+        cell.messageTextView.font = BChatSDK.config.threadSubtitleFont;
         cell.messageTextView.textColor = BChatSDK.config.threadSubtitleColor;
     }
 

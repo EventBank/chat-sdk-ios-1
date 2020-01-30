@@ -52,20 +52,22 @@
 
     // create a new Search Bar and add it to the table view
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil]
-                   setDefaultTextAttributes:@{NSFontAttributeName: BChatSDK.config.threadTitleFont}];
+                   setDefaultTextAttributes:@{NSFontAttributeName: BChatSDK.config.threadTitleFont,
+                                              NSForegroundColorAttributeName: BChatSDK.config.threadTitleColor}];
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 60.0f)];
     [_searchBar setBarTintColor:[UIColor whiteColor]]; // outer BG
     [_searchBar setSearchBarStyle:UISearchBarStyleMinimal]; // UISearchBarStyleMinimal (with gray inner BG)
-    [_searchBar setPlaceholder:@"Search"];
+//    [_searchBar setPlaceholder:@"Search"];
 
     //                                                      iOS 13 (or newer) ObjC code : older code
-    UITextField *searchTextField = (@available(iOS 13, *)) ? _searchBar.searchTextField : [_searchBar valueForKey:@"_searchField"];
+    /*UITextField *searchTextField = (@available(iOS 13, *)) ? _searchBar.searchTextField : [_searchBar valueForKey:@"_searchField"];
     if ([searchTextField respondsToSelector:@selector(setAttributedPlaceholder:)]) {
         [searchTextField setAttributedPlaceholder:[[NSAttributedString alloc]
                                    initWithString:@"Search"
-                                       attributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor]}]];
+                                       attributes:@{NSForegroundColorAttributeName: BChatSDK.config.threadSubtitleColor}]];
+        [searchTextField setTextColor:BChatSDK.config.threadTitleColor];
         [searchTextField.layer setBackgroundColor:[UIColor whiteColor].CGColor]; // inner BG
-    }
+    }*/
     self.tableView.tableHeaderView = _searchBar;
 
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(searchBarSearchButtonClicked:)];

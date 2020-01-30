@@ -12,7 +12,8 @@
 
 @interface BPrivateThreadsViewController : BThreadsViewController <UISearchBarDelegate> {
     NSMutableArray *filteredArray;
-    UISearchBar * _searchBar;
 }
+
+@property (nonatomic, readwrite) UISearchBar * searchBar;
 
 @end

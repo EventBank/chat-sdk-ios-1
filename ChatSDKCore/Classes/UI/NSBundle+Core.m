@@ -49,27 +49,29 @@
 +(NSString *) textForMessage: (id<PMessage>) message {
     NSString * text;
     if (message.type.intValue == bMessageTypeImage) {
-        text = [self t:bImageMessage];
+        if (message.senderIsMe) {
+            return @"You sent a photo"; // [NSString stringWithFormat:@"You: %@", text];
+        } else {
+            return @"Sent a photo";
+        }
+//        text = [self t:bImageMessage];
+    } else if(message.type.intValue == bMessageTypeLocation) {
+        return [self t:bLocationMessage];
+    } else if(message.type.intValue == bMessageTypeAudio) {
+        return [self t:bAudioMessage];
+    } else if(message.type.intValue == bMessageTypeVideo) {
+        return [self t:bVideoMessage];
+    } else if(message.type.intValue == bMessageTypeSticker) {
+        return [self t:bStickerMessage];
+    } else if(message.type.intValue == bMessageTypeFile) {
+        return [self t:bFileMessage];
+    } else {
+        if (message.senderIsMe) {
+            return [NSString stringWithFormat:@"You: %@", message.text];
+        } else {
+            return message.text;
+        }
     }
-    else if(message.type.intValue == bMessageTypeLocation) {
-        text = [self t:bLocationMessage];
-    }
-    else if(message.type.intValue == bMessageTypeAudio) {
-        text = [self t:bAudioMessage];
-    }
-    else if(message.type.intValue == bMessageTypeVideo) {
-        text = [self t:bVideoMessage];
-    }
-    else if(message.type.intValue == bMessageTypeSticker) {
-        text = [self t:bStickerMessage];
-    }
-    else if(message.type.intValue == bMessageTypeFile) {
-        text = [self t:bFileMessage];
-    }
-    else {
-        text = message.text;
-    }
-    return text;
 }
 
 @end
