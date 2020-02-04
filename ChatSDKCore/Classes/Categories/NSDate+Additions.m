@@ -49,11 +49,10 @@
             int days = abs([components day]);
             time = [NSString stringWithFormat:@"%dd %@", days, [NSBundle t: bAgo]];
         } else { // if (self.daysAgo >= 7) {
-            int years = abs([components year]);
-            if (years > 0) { // year older
-                [formatter setDateFormat:@"MMM dd, yyyy"];
-            } else {
+            if (otherDay.year == today.year) {
                 [formatter setDateFormat:@"MMM dd"];
+            } else {
+                [formatter setDateFormat:@"MMM dd, yyyy"];
             }
 
             time = [formatter stringFromDate:self];
@@ -94,18 +93,15 @@
         [formatter setDateFormat:@"EEE"];
         day = [formatter stringFromDate:self];
     } */ else {
-        NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        NSDateComponents *components = [gregorian components:NSYearCalendarUnit
-                                                    fromDate:[NSDate date]
-                                                      toDate:self
-                                                     options:0];
+        NSDateComponents *otherDay = [[NSCalendar currentCalendar] components:NSCalendarUnitYear fromDate:self];
+        NSDateComponents *today = [[NSCalendar currentCalendar] components:NSCalendarUnitYear fromDate:[NSDate date]];
 
-        int years = abs([components year]);
-        if (years > 0) { // year older
-            [formatter setDateFormat:@"MMM dd, yyyy"];
-        } else {
+        if (otherDay.year == today.year) {
             [formatter setDateFormat:@"MMM dd"];
+        } else {
+            [formatter setDateFormat:@"MMM dd, yyyy"];
         }
+
         day = [formatter stringFromDate:self];
     }
     

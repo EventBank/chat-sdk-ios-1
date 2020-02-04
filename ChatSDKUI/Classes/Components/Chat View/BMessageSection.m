@@ -79,7 +79,7 @@
         UILabel * label = [[UILabel alloc] initWithFrame:rect];
         label.text = self.title;
         label.font = [UIFont systemFontOfSize:11];
-        label.textColor = BChatSDK.config.threadTitleColor;
+        label.textColor = BChatSDK.config.messageColorTime;
         label.textAlignment = NSTextAlignmentCenter;
 
         [_view addSubview:innerView];
@@ -92,7 +92,7 @@
         innerView.keepWidth.equal = label.attributedText.size.width + 10;
         
         innerView.clipsToBounds = YES;
-        innerView.backgroundColor = [BCoreUtilities colorWithHexString:BChatSDK.config.messageColorReply];
+//        innerView.backgroundColor = [BCoreUtilities colorWithHexString:BChatSDK.config.messageColorReply];
         innerView.layer.cornerRadius = 5;
     }
 

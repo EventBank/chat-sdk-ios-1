@@ -13,6 +13,8 @@
 #import <ChatSDK/Core.h>
 #import <ChatSDK/UI.h>
 
+#define bCellIdentifier @"bCellIdentifier"
+
 @interface BThreadsViewController ()
 
 @end

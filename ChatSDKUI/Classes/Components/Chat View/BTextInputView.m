@@ -51,7 +51,7 @@
         _textView.simpleDelegate = self;
         _textView.scrollEnabled = false; // YES;
         _textView.backgroundColor = [UIColor clearColor];
-        _textView.textColor = BChatSDK.config.messageColorTime;
+        _textView.textColor = BChatSDK.config.threadTitleColor;
         _textView.bounces = NO; // For some reason using scrollEnabled = NO causes probalems
         _textView.contentInset = UIEdgeInsetsMake(0.0, bMargin, 0.0, bMargin/2);
 //        _textView.textContainer.maximumNumberOfLines = 1;
@@ -68,7 +68,7 @@
         // Create a placeholder text label
         _placeholderLabel = [[UILabel alloc] init];
         [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
-        [_placeholderLabel setTextColor:BChatSDK.config.threadSubtitleColor];
+        [_placeholderLabel setTextColor:BChatSDK.config.messageColorTime];
         [_placeholderLabel setText:[NSBundle t:bWriteSomething]];
         [self addSubview:_placeholderLabel];
 
