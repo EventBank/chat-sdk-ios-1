@@ -55,8 +55,8 @@
                    setDefaultTextAttributes:@{NSFontAttributeName: BChatSDK.config.threadTitleFont,
                                               NSForegroundColorAttributeName: BChatSDK.config.threadTitleColor}];
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 60.0f)];
-    [_searchBar setBarTintColor:[UIColor whiteColor]]; // outer BG
-    [_searchBar setSearchBarStyle:UISearchBarStyleMinimal]; // UISearchBarStyleMinimal (with gray inner BG)
+//    [_searchBar setBarTintColor:[UIColor whiteColor]]; // outer BG
+//    [_searchBar setSearchBarStyle:UISearchBarStyleMinimal]; // UISearchBarStyleMinimal (with gray inner BG)
 //    [_searchBar setPlaceholder:@"Search"];
 
     //                                                      iOS 13 (or newer) ObjC code : older code
