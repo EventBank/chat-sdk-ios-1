@@ -85,6 +85,7 @@
 #define bUserPrefixKey @"user"
 #define bUserImageURLKey @"pictureURL"
 #define bUserPictures @"pictures"
+#define bUserID @"userID"
 
 #define bUserPrivilegeKey @"privilege"
 #define bUserNameLowercase @"name-lowercase"

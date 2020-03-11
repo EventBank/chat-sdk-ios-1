@@ -207,4 +207,12 @@
     return [self.entityID isEqualToString:entity.entityID];
 }
 
+-(NSString *) userID {
+    return [self.meta metaStringForKey:bUserID];
+}
+
+-(void) setUserID: (NSString *) uid {
+    [self updateMeta:@{bUserID: uid}];
+}
+
 @end

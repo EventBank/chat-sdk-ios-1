@@ -97,6 +97,9 @@
 -(void) updateMeta: (NSDictionary *) dict;
 -(RXPromise *) updateAvatarFromURL;
 
+-(void) setUserID: (NSString *) fid;
+-(NSString *) userID;
+
 @optional
 
 -(void) optimize;

@@ -28,6 +28,7 @@
     NSMutableArray * _contacts;
     NSMutableArray * _selectedContacts;
     NSMutableArray * _contactsToExclude;
+    NSMutableArray * _suggestedContacts;
     
     NSString * _filterByName;
     BHook * _internetConnectionHook;
@@ -51,5 +52,7 @@
 -(void) setUsersToExclude: (NSArray *) users;
 -(void) setSelectedUsers: (NSArray *) users;
 - (NSArray *) getSelectedUsers;
+-(void) setSuggestedUsers: (NSArray *) users;
+- (NSArray *) getSuggestedUsers;
 
 @end

@@ -296,10 +296,16 @@
 -(void) reloadData { // Load contacts
     [_contacts removeAllObjects];
     
-    if(_overrideContacts == Nil) {
+//    if(_overrideContacts == Nil) {
+//        [_contacts addObjectsFromArray:[BChatSDK.contact contactsWithType:bUserConnectionTypeContact]];
+//    } else {
+//        [_contacts addObjectsFromArray: self.overrideContacts()];
+//    }
+
+    if(_suggestedContacts == Nil) {
         [_contacts addObjectsFromArray:[BChatSDK.contact contactsWithType:bUserConnectionTypeContact]];
     } else {
-        [_contacts addObjectsFromArray: self.overrideContacts()];
+        [_contacts addObjectsFromArray: _suggestedContacts];
     }
     
     [_contacts removeObjectsInArray:_selectedContacts];
@@ -334,6 +340,17 @@
 
 - (NSArray *) getSelectedUsers {
     return _selectedContacts;
+}
+
+-(void) setSuggestedUsers:(NSArray *)users {
+    _suggestedContacts = [NSMutableArray new];
+    [_suggestedContacts addObjectsFromArray:users];
+    [self reloadData];
+}
+
+- (NSMutableArray *) getSuggestedUsers {
+    [_suggestedContacts sortOnlineThenAlphabetical];
+    return _suggestedContacts;
 }
 
 #pragma keyboard notifications
