@@ -150,18 +150,22 @@
 
     if (_searchBar.text.length == 0) {
         [_threads addObjectsFromArray:[BChatSDK.core threadsWithType:bThreadFilterPrivateThread includeDeleted:NO includeEmpty: NO]];
+        [self removeUserDisabledDM:[BChatSDK.core threadsWithType:bThreadFilterPrivateThread includeDeleted:NO includeEmpty: NO]];
     } else {
         [_threads addObjectsFromArray:filteredArray];
+        [self removeUserDisabledDM:filteredArray];
     }
 
-    for (id<PThread> thread in _threads) {
+    [super reloadData];
+}
+
+-(void) removeUserDisabledDM: (NSMutableArray *) threads {
+    for (id<PThread> thread in threads) {
         if ([[thread otherUser] userEnableDM]) {
             return;
         }
         [_threads removeObject:thread];
     }
-
-    [super reloadData];
 }
 
 @end

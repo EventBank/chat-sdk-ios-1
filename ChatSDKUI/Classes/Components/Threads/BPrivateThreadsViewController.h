@@ -16,4 +16,6 @@
 
 @property (nonatomic, readwrite) UISearchBar * searchBar;
 
+-(void) removeUserDisabledDM: (NSMutableArray *) threads;
+
 @end
