@@ -215,4 +215,12 @@
     [self updateMeta:@{bUserID: uid}];
 }
 
+-(BOOL) userEnableDM {
+    return [[self.meta metaValueForKey:bUserEnabledDM] boolValue];
+}
+
+-(void) setUserEnableDM: (BOOL) enabled {
+    [self updateMeta:@{bUserEnabledDM:[NSNumber numberWithBool:enabled]}];
+}
+
 @end

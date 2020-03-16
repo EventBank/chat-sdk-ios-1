@@ -100,6 +100,9 @@
 -(void) setUserID: (NSString *) fid;
 -(NSString *) userID;
 
+-(void) setUserEnableDM: (BOOL) enabled;
+-(BOOL) userEnableDM;
+
 @optional
 
 -(void) optimize;

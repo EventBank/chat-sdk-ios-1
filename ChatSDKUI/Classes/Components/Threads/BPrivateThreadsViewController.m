@@ -97,13 +97,13 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     [filteredArray removeAllObjects];
-    for (id<PThread> thread in [BChatSDK.core threadsWithType:bThreadFilterPrivateThread includeDeleted:NO]) {
-        if ([thread.displayName containsString:searchText]) {
+    for (id<PThread> thread in [BChatSDK.core threadsWithType:bThreadFilterPrivateThread includeDeleted:NO includeEmpty:NO]) {
+        if ([thread.displayName localizedCaseInsensitiveContainsString:searchText]) {
             [filteredArray addObject:thread];
         }
-    }
+    } // NSLog(@"filtered ->%@", filteredArray);
 
-    [self reloadData]; // NSLog(@"filtered ->%@", filteredArray);
+    [self reloadData];
 }
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
@@ -149,9 +149,16 @@
     [_threads removeAllObjects];
 
     if (_searchBar.text.length == 0) {
-        [_threads addObjectsFromArray:[BChatSDK.core threadsWithType:bThreadFilterPrivateThread includeDeleted:NO]];
+        [_threads addObjectsFromArray:[BChatSDK.core threadsWithType:bThreadFilterPrivateThread includeDeleted:NO includeEmpty: NO]];
     } else {
         [_threads addObjectsFromArray:filteredArray];
+    }
+
+    for (id<PThread> thread in _threads) {
+        if [[thread otherUser] userEnableDM] {
+            return
+        }
+        [_threads removeObject:thread];
     }
 
     [super reloadData];
