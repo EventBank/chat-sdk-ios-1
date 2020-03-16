@@ -155,8 +155,8 @@
     }
 
     for (id<PThread> thread in _threads) {
-        if [[thread otherUser] userEnableDM] {
-            return
+        if ([[thread otherUser] userEnableDM]) {
+            return;
         }
         [_threads removeObject:thread];
     }
