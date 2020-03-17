@@ -348,9 +348,13 @@
     [self reloadData];
 }
 
-- (NSMutableArray *) getSuggestedUsers {
+- (NSArray *) getSuggestedUsers {
     [_suggestedContacts sortOnlineThenAlphabetical];
     return _suggestedContacts;
+}
+
+- (NSArray *) getUsers {
+    return _contacts;
 }
 
 #pragma keyboard notifications

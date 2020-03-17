@@ -54,5 +54,6 @@
 - (NSArray *) getSelectedUsers;
 -(void) setSuggestedUsers: (NSArray *) users;
 - (NSArray *) getSuggestedUsers;
+- (NSArray *) getUsers;
 
 @end
