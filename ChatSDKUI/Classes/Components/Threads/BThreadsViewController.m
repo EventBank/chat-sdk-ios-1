@@ -216,6 +216,8 @@
     } else {
         [cell stopTypingWithMessage:text];
     }
+
+    [cell setIsOnline:thread.otherUser.online.boolValue];
     
     return cell;
 }
